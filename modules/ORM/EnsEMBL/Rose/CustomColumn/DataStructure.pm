@@ -15,7 +15,11 @@ use base qw(
 );
 
 sub new {
-  return shift->init_custom_column(@_);
+  ## Creates new from existing or from the given params
+  my $class = shift;
+  my $self  = $class->new_from_existing(@_) || $class->SUPER::new(@_);
+
+  return $self->init_custom_column;
 }
 
 sub allowed_base_classes {
