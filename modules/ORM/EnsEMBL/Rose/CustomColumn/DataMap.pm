@@ -71,7 +71,7 @@ sub new {
 
 sub value_class {
   ## @overrides
-  return 'ORM::EnsEMBL::Rose::CustomColumn::DataMap';
+  return 'ORM::EnsEMBL::Rose::CustomColumnValue::DataMap';
 }
 
 sub type {
