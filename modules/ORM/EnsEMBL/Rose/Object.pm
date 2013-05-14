@@ -30,14 +30,6 @@ __PACKAGE__->meta->column_type_class(       ## Add extra column type(s)
   'datamap'       => 'ORM::EnsEMBL::Rose::CustomColumn::DataMap',
 );
 
-sub new {
-  ## @overrides
-  ## Provides default values to virtual columns after creating a new object
-  my $self = shift->SUPER::new(@_);
-  $_->default_exists and $self->virtual_column_value($_, $_->default) for $self->meta->virtual_columns;
-  return $self;
-}
-
 sub save {
   ## @overrides
   ## Adds any trackable columns values if object is trackable
