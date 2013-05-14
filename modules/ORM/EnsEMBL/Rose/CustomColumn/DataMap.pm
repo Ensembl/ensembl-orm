@@ -26,6 +26,49 @@ use ORM::EnsEMBL::Rose::CustomColumnValue::DataMap;
 
 use base qw(ORM::EnsEMBL::Rose::CustomColumn::DataStructure);
 
+sub new {
+  ## @overrides
+  ## Provides default values to virtual columns after creating a new object
+  my $self = shift->SUPER::new(@_);
+
+  my $set_default_values = sub {
+    my ($object, $column) = @_;
+    for ($object->meta->virtual_columns) {
+      if ($_->column eq $column && $_->default_exists) {
+        my $current_val = $object->virtual_column_value($_);
+        my $default_val = $_->default;
+        $object->virtual_column_value($_, $default_val) if not defined $current_val || $current_val eq '' && $default_val ne '';
+      }
+    }
+  };
+
+  $self->delete_trigger('event' => 'deflate', 'name' => 'value_class_to_value');
+
+  $self->add_trigger(
+    'event' => 'deflate',
+    'name'  => 'datamap_value_class_to_value',
+    'code'  => sub {
+      my ($object, $value) = @_;
+      $value = $self->value_class->new($value, $self) unless UNIVERSAL::isa($value, $self->value_class);
+      $set_default_values->($object, $self);
+      return $value->to_string;
+    }
+  );
+
+  $self->add_trigger(
+    'event' => 'on_get',
+    'name'  => 'set_defaults',
+    'code'  => sub {
+      my ($object, $value) = @_;
+      $value = $self->value_class->new($value, $self) unless UNIVERSAL::isa($value, $self->value_class);
+      $set_default_values->($object, $self);
+      return $value;
+    }
+  );
+  
+  return $self;
+}
+
 sub value_class {
   ## @overrides
   return 'ORM::EnsEMBL::Rose::CustomColumn::DataMap';
