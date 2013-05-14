@@ -14,7 +14,7 @@ sub new {
   ## @constructor
   ## @params Hashref with keys:
   ##  - name:     actual key name
-  ##  - column:   column name that created the hash saved as string
+  ##  - column:   Column object containing this virtual column
   ##  - alias:    alternative name to be used as a method name for rose object if key name is reserved in rose
   ##  - parent:   Meta class of the rose object
   ##  - default:  Default value
