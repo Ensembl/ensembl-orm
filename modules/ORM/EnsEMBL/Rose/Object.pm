@@ -26,8 +26,8 @@ use constant {
 
 __PACKAGE__->meta->error_mode('return');    ## When debugging, change from 'return' to 'carp'/'cluck'/'confess'/'croak' to produce the desired Carp behaviour
 __PACKAGE__->meta->column_type_class(       ## Add extra column type(s)
-  'datastructure' => 'ORM::EnsEMBL::Rose::DataStructure',
-  'datamap'       => 'ORM::EnsEMBL::Rose::DataMap',
+  'datastructure' => 'ORM::EnsEMBL::Rose::CustomColumn::DataStructure',
+  'datamap'       => 'ORM::EnsEMBL::Rose::CustomColumn::DataMap',
 );
 
 sub new {
