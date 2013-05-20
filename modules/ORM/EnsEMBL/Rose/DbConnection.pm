@@ -23,13 +23,16 @@ sub register_database {
   ##  - type     Type as specified in individual rose objects
   my ($self, $params) = @_;
 
-  $self->register_db(qw(port 3306 driver mysql domain ensembl), %$params);
+  return $self->register_db(qw(port 3306 driver mysql domain ensembl), %$params);
 }
 
 sub register_from_sitedefs {
   ## Registers data sources from site defs
   ## @param SiteDefs
   my ($self, $sd) = @_;
+
+  my $return = {};
+
   while (my ($key, $details) = each %{$sd->ROSE_DB_DATABASES}) {
 
     my $params = $details;
@@ -46,8 +49,10 @@ sub register_from_sitedefs {
 
     $params->{'type'} = $key;
 
-    $self->register_database($params);
+    $return->{$key} = $self->register_database($params);
   }
+  
+  return $return;
 }
 
 1;
