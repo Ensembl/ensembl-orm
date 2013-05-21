@@ -26,18 +26,20 @@ sub register_database {
   return $self->register_db(qw(port 3306 driver mysql domain ensembl), %$params);
 }
 
-sub register_from_sitedefs {
-  ## Registers data sources from site defs
-  ## @param SiteDefs
+sub register_from_speciesdefs {
+  ## Registers data sources from species defs
+  ## @param EnsEMBL::Web::SpeciesDefs object
   my ($self, $sd) = @_;
 
   my $return = {};
 
-  while (my ($key, $details) = each %{$sd->ROSE_DB_DATABASES}) {
+  $sd->set_userdb_details_for_rose if $sd->can('set_userdb_details_for_rose');
 
-    my $params = $details;
+  while (my ($key, $value) = each %{$sd->ENSEMBL_ORM_DATABASES}) {
+
+    my $params = $value;
     if (!ref $params) {
-      $params = $sd->multidb->{$details} or warn "Database connection properties for '$details' could not be found in SiteDefs" and next;
+      $params = $sd->multidb->{$value} or warn "Database connection properties for '$value' could not be found in SiteDefs" and next;
       $params = {
         'database'  => $params->{'NAME'},
         'host'      => $params->{'HOST'} || $sd->DATABASE_HOST,
