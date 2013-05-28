@@ -3,7 +3,7 @@ package ORM::EnsEMBL::DB::Tools::Object::Job;
 use strict;
 use warnings;
 
-use base qw(ORM::EnsEMBL::Rose::Object);
+use base qw(ORM::EnsEMBL::DB::Tools::Object);
 
 __PACKAGE__->meta->setup(
   table       => 'job_type',
