@@ -1,4 +1,4 @@
-package ORM::EnsEMBL::DB::Tools::Object::Job;
+package ORM::EnsEMBL::DB::Tools::Object::JobType;
 
 use strict;
 use warnings;
