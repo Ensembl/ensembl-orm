@@ -29,7 +29,7 @@ __PACKAGE__->meta->setup(
     },
     job => {
       type        => 'one to one',
-      class       => 'ORM::EnsEMBL::DB::Tools::Object::Job',  
+      class       => 'ORM::EnsEMBL::DB::Tools::Object::JobType',  
       column_map  => {'job_type_id' => 'job_type_id'},
     },
     sub_job => {
