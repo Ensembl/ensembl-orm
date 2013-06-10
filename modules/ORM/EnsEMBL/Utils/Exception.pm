@@ -39,6 +39,7 @@ sub import {
 sub new {
   my ($class, $message) = @_;
   return bless {
+    'type'    => 'ORMException',
     'message' => $message  || '',
     'stack'   => longmess
   }, $class;
@@ -51,7 +52,11 @@ sub to_string {
 
 
 sub type {
-  return 'ORMException';
+  return shift->{'type'};
+}
+
+sub message {
+  return shift->{'message'};
 }
 
 1;
