@@ -6,6 +6,8 @@ package ORM::EnsEMBL::Rose::DbConnection;
 use strict;
 use warnings;
 
+use ORM::EnsEMBL::Utils::Exception;
+
 use base qw(Rose::DB);
 
 __PACKAGE__->use_private_registry;      ## Use a private registry for this class
@@ -24,6 +26,18 @@ sub register_database {
   my ($self, $params) = @_;
 
   return $self->register_db(qw(port 3306 driver mysql domain ensembl), %$params);
+}
+
+sub dbi_connect {
+  my ($self, @args) = @_;
+  my $connection;
+  try {
+    $connection = $self->SUPER::dbi_connect(@args);
+  } catch {
+    warn $_;
+  };
+  throw('Database connection could not be created.') unless $connection;
+  return $connection;
 }
 
 sub register_from_speciesdefs {
