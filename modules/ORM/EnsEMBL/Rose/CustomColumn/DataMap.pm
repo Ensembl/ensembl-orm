@@ -32,12 +32,12 @@ sub new {
   my $self = shift->SUPER::new(@_);
 
   my $set_default_values = sub {
-    my ($object, $column) = @_;
+    my ($object, $column, $value) = @_;
     for ($object->meta->virtual_columns) {
       if ($_->column eq $column && $_->default_exists) {
-        my $current_val = $object->virtual_column_value($_);
+        my $current_val = $value->{$_};
         my $default_val = $_->default;
-        $object->virtual_column_value($_, $default_val) if not defined $current_val || $current_val eq '' && $default_val ne '';
+        $value->{$_} = $default_val if !defined $current_val || $current_val eq '' && $default_val ne '';
       }
     }
   };
@@ -50,7 +50,7 @@ sub new {
     'code'  => sub {
       my ($object, $value) = @_;
       $value = $self->value_class->new($value, $self) unless UNIVERSAL::isa($value, $self->value_class);
-      $set_default_values->($object, $self);
+      $set_default_values->($object, $self, $value);
       return $value->to_string;
     }
   );
@@ -61,7 +61,7 @@ sub new {
     'code'  => sub {
       my ($object, $value) = @_;
       $value = $self->value_class->new($value, $self) unless UNIVERSAL::isa($value, $self->value_class);
-      $set_default_values->($object, $self);
+      $set_default_values->($object, $self, $value);
       return $value;
     }
   );
