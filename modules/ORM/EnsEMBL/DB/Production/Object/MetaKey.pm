@@ -9,10 +9,10 @@ __PACKAGE__->meta->setup(
   table       => 'meta_key',
 
   columns     => [
-    meta_key_id       => {type => 'serial', primary_key => 1, not_null => 1}, 
+    meta_key_id       => {type => 'serial', primary_key => 1, not_null => 1},
     name              => {type => 'varchar', 'length' => 64 },
-    is_current        => {type => 'integer', 'default' => 1 },
-    is_optional       => {type => 'integer'},
+    is_current        => {type => 'integer', 'default' => 1, not_null => 1},
+    is_optional       => {type => 'integer', 'default' => 0, not_null => 1},
     db_type           => {type => 'set', default => 'core', not_null => 1, 'values' => [qw(
                             cdna
                             core

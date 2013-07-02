@@ -11,8 +11,8 @@ __PACKAGE__->meta->setup(
   columns     => [
     biotype_id        => {type => 'serial', primary_key => 1, not_null => 1}, 
     name              => {type => 'varchar', 'length' => 64 },
-    is_current        => {type => 'integer'},
-    is_dumped         => {type => 'integer'},
+    is_current        => {type => 'integer', default => 1, not_null => 1},
+    is_dumped         => {type => 'integer', default => 1, not_null => 1},
     object_type       => {type => 'enum', default => 'gene', not_null => 1, 'values' => [qw(gene transcript)]},
     db_type           => {type => 'set' , default => 'core', not_null => 1, 'values' => [qw(
                             cdna

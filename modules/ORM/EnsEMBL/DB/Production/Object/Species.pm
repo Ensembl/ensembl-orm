@@ -19,7 +19,7 @@ __PACKAGE__->meta->setup(
     taxon             => {type => 'varchar', 'length' => 20 },
     species_prefix    => {type => 'varchar', 'length' => 20 },
     attrib_type_id    => {type => 'integer', 'length' => 10 },
-    is_current        => {type => 'integer'},
+    is_current        => {type => 'integer', 'default' => 1,  not_null => 1}
   ],
   
   trackable             => 1,

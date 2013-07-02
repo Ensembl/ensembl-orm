@@ -12,7 +12,7 @@ __PACKAGE__->meta->setup(
     species_alias_id  => {type => 'serial', primary_key => 1, not_null => 1},
     species_id        => {type => 'integer',                  not_null => 1},
     alias             => {type => 'varchar', 'length' => 255, not_null => 1},
-    is_current        => {type => 'integer'},
+    is_current        => {type => 'integer', 'default' => 1,  not_null => 1},
   ],
 
   trackable             => 1,

@@ -19,7 +19,7 @@ __PACKAGE__->meta->setup(
     secondary_db_name     => {'type' => 'varchar',                    'length' => 255},
     secondary_db_table    => {'type' => 'varchar',                    'length' => 255},
     description           => {'type' => 'text'}, 
-    is_current            => {'type' => 'int',                        'length' => 1,     'default' => 1}
+    is_current            => {'type' => 'int',      'not_null' => 1,  'length' => 1,     'default' => 1}
   ],
   
   trackable             => 1,
