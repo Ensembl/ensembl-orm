@@ -11,6 +11,7 @@ __PACKAGE__->meta->setup(
   columns     => [
     ticket_id     => {type => 'serial', primary_key => 1, not_null => 1},
     owner_id      => {type => 'varchar', length => 32, not_null => 1},
+    owner_type    => {type => 'enum', 'values' => [qw(user session)], not_null => 1, 'default' => 'session'},
     job_type_id   => {type => 'tinyint', not_null=>1},
     ticket_name   => {type => 'varchar', length => 32, not_null => 1},
     ticket_desc   => {type => 'varchar', length =>160},
@@ -27,9 +28,9 @@ __PACKAGE__->meta->setup(
       class       =>  'ORM::EnsEMBL::DB::Tools::Object::Analysis',
       column_map  =>  {'ticket_id' => 'ticket_id'},
     },
-    job => {
+    job_type => {
       type        => 'one to one',
-      class       => 'ORM::EnsEMBL::DB::Tools::Object::JobType',  
+      class       => 'ORM::EnsEMBL::DB::Tools::Object::JobType',
       column_map  => {'job_type_id' => 'job_type_id'},
     },
     sub_job => {
