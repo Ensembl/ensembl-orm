@@ -10,8 +10,8 @@ __PACKAGE__->meta->setup(
 
   columns     => [
     job_type_id => {type => 'tinyint', primary_key => 1, not_null=>1},
-    job_type    => {type => 'varchar', length => 10, not_null => 1},
-    job_name    => {type => 'varchar', length => 32, not_null => 1},
+    job_type    => {type => 'varchar', length => 10, not_null => 1, 'alias' => 'name'},
+    job_name    => {type => 'varchar', length => 32, not_null => 1, 'alias' => 'caption'},
   ],
 
   relationships => [
