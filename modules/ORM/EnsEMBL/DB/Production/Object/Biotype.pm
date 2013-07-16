@@ -33,8 +33,8 @@ __PACKAGE__->meta->setup(
     biotype_group     => {type => 'enum', default => 'undefined', not_null => 1, 'values' => [qw(
                             coding
                             pseudogene
-                            short_noncoding
-                            long_noncoding
+                            snoncoding
+                            lnoncoding
                             undefined)]
     }
   ],
