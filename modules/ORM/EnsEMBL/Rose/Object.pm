@@ -52,7 +52,7 @@ sub save {
   
   my $return;
   eval {
-    $return = $self->SUPER::save(@_);
+    $return = $self->SUPER::save(%params);
   };
   throw($@) if $@;
 
