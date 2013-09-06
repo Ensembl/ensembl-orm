@@ -248,15 +248,14 @@ sub _hybrid_columns {
   my $col_classes   = $self->column_type_classes;
 
   for (@_) {
-    $_ = {'name' => $_} unless ref $_;
+    my $col = ref $_ ? $_ : {'name' => $_};
+    my $params;
 
-    my ($col, $params);
-    if (UNIVERSAL::isa($_, 'Rose::DB::Object::Metadata::Column')) {
-      $col    = $_;
+    if (UNIVERSAL::isa($col, 'Rose::DB::Object::Metadata::Column')) {
       $params = {};
     } else {
-      $col    = $self->column(delete $_->{'name'});
-      $params = $_;
+      $params = $col;
+      $col    = $self->column(delete $params->{'name'});
     }
     my $ctype = $col->type;
     if ($ctype ne $type) {
