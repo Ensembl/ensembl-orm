@@ -5,6 +5,7 @@ package ORM::EnsEMBL::Rose::CustomColumnValue::DataStructure;
 ## Purpose of this class is to stringify the datastructure if it's being used as a string, and keep it in a reference otherwise
 
 use strict;
+use warnings;
 
 use Data::Dumper;
 use ORM::EnsEMBL::Utils::Exception;
@@ -24,13 +25,16 @@ sub new {
   ## @exception In case problem parsing the datastructure
   my ($class, $data, $column) = @_;
 
-  if (ref $data) {
-    $data = clone($data);
-  }
-  else {
-    my $error = '';
-    $data = _parse("$data", $column->trusted, \$error);
-    throw($error) if $error; # if any error in parsing
+  if (defined $data) {
+    if (ref $data) {
+      $data = clone($data);
+    } else {
+      my $error = '';
+      $data = _parse("$data", $column->trusted, \$error);
+      throw($error) if $error; # if any error in parsing
+    }
+  } else {
+    $data = {};
   }
 
   $data = \"$data" unless ref $data;
@@ -65,8 +69,8 @@ sub clone {
   my $obj = shift;
 
   return $obj unless ref $obj;
-  return { map {clone($_)} %$obj} if UNIVERSAL::isa($obj, 'HASH');
-  return [ map {clone($_)} @$obj] if UNIVERSAL::isa($obj, 'ARRAY');
+  return { map clone($_), %$obj } if UNIVERSAL::isa($obj, 'HASH');
+  return [ map clone($_), @$obj ] if UNIVERSAL::isa($obj, 'ARRAY');
 }
 
 sub _parse {
@@ -107,10 +111,10 @@ sub _parse {
     ## Wrap the unquoted hash keys with single quotes
     my $str_1 = $str;
     my $str_2 = $str;
-    my $i     = 0;
+    my $j     = 0;
     while ($str_1 =~ /[\{\,]{1}[\n\s\t]*(\'|\"?)([^\n\s\t\']+)(\'|\"?)[\n\s\t]*\=>/g) {
       next if $1;
-      substr($str,   $-[2] + $i++ * 2, length $2) = qq('$2');
+      substr($str,   $-[2] + $j++ * 2, length $2) = qq('$2');
       substr($str_2, $-[2],            length $2) = ' ' x length $2;
     }
 
@@ -120,8 +124,8 @@ sub _parse {
     }
 
     ## all checks done, now substitute the strings back in
-    $str_1   = $str;
-    my $last = 0;
+    $str_1  = $str;
+    $last   = 0;
     while ($str_1 =~ /((\"|\')([0-9]+)(\"|\'))/g) {
       my $qstr = sprintf '%s%s%1$s', $2, $strings[$3][0];
       substr($str, $-[1] + $last, length $1) =  $qstr;
