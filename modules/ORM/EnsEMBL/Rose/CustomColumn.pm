@@ -48,7 +48,9 @@ sub init_custom_column {
     'code'  => sub {
       my ($object, $value) = @_;
       $value = $self->value_class->new($value, $self) unless UNIVERSAL::isa($value, $self->value_class);
-      return $value->to_string;
+      $value = $value->to_string;
+      $value = undef if $value eq '' || $value eq '{}'; # this prevents adding anything in the 'text' type column in case of null value
+      return $value;
     }
   );
 
