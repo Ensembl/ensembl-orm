@@ -1,6 +1,5 @@
 package ORM::EnsEMBL::Rose::CustomColumnValue::DataStructure;
 
-## Name: ORM::EnsEMBL::Rose::CustomColumnValue::DataStructure
 ## Class representing the value provided to column type 'datastructure'
 ## Purpose of this class is to stringify the datastructure if it's being used as a string, and keep it in a reference otherwise
 
@@ -9,6 +8,8 @@ use warnings;
 
 use Data::Dumper;
 use ORM::EnsEMBL::Utils::Exception;
+
+use base qw(ORM::EnsEMBL::Rose::CustomColumnValue);
 
 use overload (
   '""'  => 'to_string',
@@ -19,26 +20,42 @@ use overload (
 
 sub new {
   ## @constructor
+  ## @override
   ## @param datastructure (possibly unparsed stringified)
   ## @param Column object
   ## @return Can return a blessed hash or a blessed array or a blessed scalar ref depending upon the argument provided
   ## @exception In case problem parsing the datastructure
-  my ($class, $data, $column) = @_;
+  my ($class, $value, $column) = @_;
 
-  if (defined $data) {
-    if (ref $data) {
-      $data = clone($data);
+  return $value if UNIVERSAL::isa($value, $class);
+
+  if (defined $value) {
+    if (ref $value) {
+      $value = clone($value);
     } else {
       my $error = '';
-      $data = _parse("$data", $column->trusted, \$error);
+      $value = _parse("$value", $column->trusted, \$error);
       throw($error) if $error; # if any error in parsing
     }
   } else {
-    $data = {};
+    $value = {};
   }
 
-  $data = \"$data" unless ref $data;
-  return bless $data, $class;
+  $value = \"$value" unless ref $value;
+  return bless $value, $class;
+}
+
+sub inflate {
+  ## Abstract method implementation
+  ## The inflated value of type datastructure is the instance if this class itself
+  return shift;
+}
+
+sub deflate {
+  ## Abstract method implementation
+  my $self  = shift;
+  my $value = $self->to_string;
+  return $value eq '' || $value eq '{}' ? undef : $value; # returning undef prevents adding anything in the 'text' type column in case of null value
 }
 
 sub to_string {
