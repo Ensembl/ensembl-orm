@@ -23,17 +23,17 @@ sub new {
 }
 
 sub allowed_base_classes {
-  ## @overrides
+  ## Abstract method implementation
   return qw(Rose::DB::Object::Metadata::Column::Text);
 }
 
 sub value_class {
-  ## @overrides
+  ## Abstract method implementation
   return 'ORM::EnsEMBL::Rose::CustomColumnValue::DataStructure';
 }
 
 sub type {
-  ## @overrides
+  ## Abstract method implementation
   return 'datastructure';
 }
 
