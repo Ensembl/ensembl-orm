@@ -10,6 +10,16 @@ use base qw(ORM::EnsEMBL::Rose::Manager);
 
 sub object_class { 'ORM::EnsEMBL::DB::Production::Object::Biotype' }
 
+=head2 fetch_biotype
+
+    Arg [0]    : Instance of Bio::EnsEMBL::Gene|Transcript
+    Description: Returns an object corresponding to the biotype of the argument
+    Returntype : Instance of ORM::EnsEMBL::DB::Production::Object::Biotype
+    Exceptions : if argument is not gene or transcript, or if object cannot
+                 be fetched, or multiple objects are fetched
+
+=cut
+
 sub fetch_biotype {
   my ($self, $feature) = @_;
   
@@ -35,6 +45,15 @@ sub fetch_biotype {
   return $biotypes->[0];
 }
 
+=head2 fetch_all_biotype_groups
+
+    Arg []     : None
+    Description: Returns all biotype groups from the production db
+    Returntype : ArrayRef; the list of groups
+    Exceptions : None
+
+=cut
+
 sub fetch_all_biotype_groups {
   my $self = shift;
 
@@ -43,6 +62,15 @@ sub fetch_all_biotype_groups {
 
   return \@groups;  
 }
+
+=head2 group_members
+
+    Arg [0]    : String; the name of the group
+    Description: Returns the biotypes having the group specified as argument
+    Returntype : ArrayRef; the list of biotypes
+    Exceptions : if the group does not exist
+
+=cut
 
 sub group_members {
   my ($self, $group) = @_;
@@ -62,6 +90,17 @@ sub group_members {
   my @members = keys %members;
   return \@members;
 }
+
+=head2 is_member_of_group
+
+    Arg [0]    : Instance of Bio::EnsEMBL::Gene|Transcript
+    Arg [1]    : String; the name of the group
+    Description: Returns the biotypes having the group specified as argument
+    Returntype : 0/1 if the biotype belongs/do not belong to the group
+    Exceptions : if the group does not exist or if the first argument is
+                 not a gene or transcript
+
+=cut
 
 sub is_member_of_group {
   my ($self, $feature, $group) = @_;
