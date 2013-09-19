@@ -21,61 +21,51 @@ package ORM::EnsEMBL::Rose::CustomColumn::DataMap;
 ### );
 
 use strict;
+use warnings;
 
 use ORM::EnsEMBL::Rose::CustomColumnValue::DataMap;
 
 use base qw(ORM::EnsEMBL::Rose::CustomColumn::DataStructure);
 
-sub new {
-  ## @overrides
-  ## Provides default values to virtual columns after creating a new object
-  my $self = shift->SUPER::new(@_);
-
-  my $set_default_values = sub {
-    my ($object, $column, $value) = @_;
-    for ($object->meta->virtual_columns) {
-      if ($_->column eq $column && $_->default_exists) {
-        my $current_val = $value->{$_};
-        my $default_val = $_->default;
-        $value->{$_} = $default_val if !defined $current_val || $current_val eq '' && $default_val ne '';
-      }
-    }
-  };
-
-  $self->delete_trigger('event' => 'deflate', 'name' => 'value_class_to_value');
-
-  $self->add_trigger(
-    'event' => 'deflate',
-    'name'  => 'datamap_value_class_to_value',
-    'code'  => sub {
-      my ($object, $value) = @_;
-      $value = $self->value_class->new($value, $self) unless UNIVERSAL::isa($value, $self->value_class);
-      $set_default_values->($object, $self, $value);
-      return $value->to_string;
-    }
-  );
+sub init_custom_column {
+  ## @override
+  ## Adds 'on_get' trigger to the column to set default values of the virtual columns
+  my $self = shift->SUPER::init_custom_column;
 
   $self->add_trigger(
     'event' => 'on_get',
     'name'  => 'set_defaults',
     'code'  => sub {
       my ($object, $value) = @_;
-      $value = $self->value_class->new($value, $self) unless UNIVERSAL::isa($value, $self->value_class);
-      $set_default_values->($object, $self, $value);
+      $value = $self->value_class->new($value, $self);
+      $self->set_default_values($value);
       return $value;
     }
   );
-  
+
   return $self;
 }
 
+sub set_default_values {
+  ## Sets default values to the virtual columns
+  ## @param Inflated value
+  my ($self, $value) = @_;
+  for ($self->parent->virtual_columns) {
+    if ($_->column eq $self && $_->default_exists) {
+      my $current_val = $value->{$_};
+      my $default_val = $_->default;
+      $value->{$_} = $default_val if !defined $current_val || $current_val eq '' && $default_val ne '';
+    }
+  }
+}
+
 sub value_class {
-  ## @overrides
+  ## Abstract method implementation
   return 'ORM::EnsEMBL::Rose::CustomColumnValue::DataMap';
 }
 
 sub type {
-  ## @overrides
+  ## Abstract method implementation
   return 'datamap';
 }
 
