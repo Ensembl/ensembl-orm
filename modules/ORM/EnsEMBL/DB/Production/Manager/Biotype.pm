@@ -3,10 +3,90 @@ package ORM::EnsEMBL::DB::Production::Manager::Biotype;
 use strict;
 use warnings;
 
+use Bio::EnsEMBL::Utils::Exception qw( throw );
 use ORM::EnsEMBL::DB::Production::Object::Biotype;
 
 use base qw(ORM::EnsEMBL::Rose::Manager);
 
 sub object_class { 'ORM::EnsEMBL::DB::Production::Object::Biotype' }
+
+sub fetch_biotype {
+  my ($self, $feature) = @_;
+  
+  my $object_type;
+  if ($feature->isa('Bio::EnsEMBL::Gene')) {
+    $object_type = 'gene';
+  } elsif ($feature->isa('Bio::EnsEMBL::Transcript')) {
+    $object_type = 'transcript';
+  } else {
+    throw sprintf "Argument (display_id: %s) is not a gene or transcript", $feature->display_id;
+  }
+  
+  my $biotypes = $self->get_objects(query => [
+					      name => $feature->biotype,
+					      object_type => $object_type,
+					     ]);
+  
+  throw sprintf "Feature %s: unable to fetch the corresponding biotype object", $feature->display_id
+    unless scalar @{$biotypes};
+  throw sprintf "Feature %s: fetched multiple biotype objects for feature %s", $feature->display_id
+    unless scalar @{$biotypes} == 1;
+  
+  return $biotypes->[0];
+}
+
+sub fetch_all_biotype_groups {
+  my $self = shift;
+
+  my @groups = map { $_->{biotype_group} }
+    @{$self->get_objects(select => ['biotype_group'], distinct => 1)};
+
+  return \@groups;  
+}
+
+sub group_members {
+  my ($self, $group) = @_;
+
+  # check group is a valid one
+  throw "Invalid biotype group $group specified"
+    unless $group ~~ @{$self->fetch_all_biotype_groups()};
+
+  my %members;
+  map { $members{$_->{name}}++ }
+    @{$self->get_objects(select => ['name'],
+			 query => [
+				   biotype_group => $group
+				  ],
+			 distict => 1)};
+
+  my @members = keys %members;
+  return \@members;
+}
+
+sub is_member_of_group {
+  my ($self, $feature, $group) = @_;
+
+  # check group is a valid one
+  throw "Invalid biotype group $group specified"
+    unless $group ~~ @{$self->fetch_all_biotype_groups()};
+
+  my $object_type;
+  if ($feature->isa('Bio::EnsEMBL::Gene')) {
+    $object_type = 'gene';
+  } elsif ($feature->isa('Bio::EnsEMBL::Transcript')) {
+    $object_type = 'transcript';
+  } else {
+    throw sprintf "Argument (display_id: %s) is not a gene or transcript", $feature->display_id;
+  }
+
+  my $biotypes = $self->get_objects(query => [
+					      name => $feature->biotype,
+					      object_type => $object_type,
+					      biotype_group => $group
+					     ]);
+
+  return 0 unless scalar @{$biotypes};
+  return 1;
+}
 
 1;
