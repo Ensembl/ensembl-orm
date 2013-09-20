@@ -1,7 +1,7 @@
 package ORM::EnsEMBL::Rose::CustomColumn;
 
-### Name: ORM::EnsEMBL::Rose::CustomColumn
-### Base class for custom columns (the child class needs to use one of the Rose::Metadata::Column classes as base along with this class - MI)
+### Abstract base class for custom columns
+### The child class needs to use one of the Rose::Metadata::Column classes as base along with this class to work properly
 
 use strict;
 use warnings;
@@ -15,7 +15,7 @@ sub new_from_existing {
   my $class = shift;
   my $self  = $_[0];
 
-  if (ref $self && UNIVERSAL::isa($self, 'Rose::DB::Object::Metadata::Column')) { # if trying to convert an existing column to a datastructure column
+  if (ref $self && UNIVERSAL::isa($self, 'Rose::DB::Object::Metadata::Column')) {
 
     my @allowed_columns = $class->allowed_base_classes;
     throw(sprintf 'Only %s type columns can be converted to %s type columns', join(', ', map { $_->type } @allowed_columns), $class->type) unless grep $self->isa($_), @allowed_columns;
@@ -38,7 +38,8 @@ sub init_custom_column {
     'name'  => 'value_to_value_class',
     'code'  => sub {
       my ($object, $value) = @_;
-      return $self->value_class->new($value, $self);
+      $value = $self->value_class->new($value, $self, $object);
+      return $value->inflate($self, $object);
     }
   );
 
@@ -47,10 +48,8 @@ sub init_custom_column {
     'name'  => 'value_class_to_value',
     'code'  => sub {
       my ($object, $value) = @_;
-      $value = $self->value_class->new($value, $self) unless UNIVERSAL::isa($value, $self->value_class);
-      $value = $value->to_string;
-      $value = undef if $value eq '' || $value eq '{}'; # this prevents adding anything in the 'text' type column in case of null value
-      return $value;
+      $value = $self->value_class->new($value, $self, $object);
+      return $value->deflate($self, $object);
     }
   );
 
@@ -58,21 +57,21 @@ sub init_custom_column {
 }
 
 sub allowed_base_classes {
-  ## Returns a list of classes that can be converted into the given custom column type
-  ## Override this in child class to return the appropriate class names
-  throw(sprintf 'Allowed base classes have not been defined for %s', ref $_[0] || $_[0]);
+  ## @abstract
+  ## Should return a list of classes that can be converted into the given custom column type
+  throw('Abstract method not implemented.');
 }
 
 sub value_class {
-  ## Returns the name of the class that will be instantiated to represent value of this column
-  ## Override this in child class to return the appropriate class name
-  throw(sprintf 'Custom column value class has not been defined for %s', ref $_[0] || $_[0]);
+  ## @abstract
+  ## Should return the name of the class that will be instantiated to represent value of this column
+  throw('Abstract method not implemented.');
 }
 
 sub type {
-  ## Returns the type of the column
-  ## Override this in the child class to change column 'type'
-  return 'custom';
+  ## @abstract
+  ## Should return the type of the column
+  throw('Abstract method not implemented.');
 }
 
 1;
