@@ -1,6 +1,5 @@
 package ORM::EnsEMBL::Rose::CustomColumn::DataMap;
 
-### Name: ORM::EnsEMBL::Rose::CustomColumn::DataMap
 ### Class for column type 'datamap' corresponding to single dimensional Hash
 ### Together with ORM::EnsEMBL::Rose::VirtualColumn, this package enables to access keys of this column as method names to the actual rose object
 
