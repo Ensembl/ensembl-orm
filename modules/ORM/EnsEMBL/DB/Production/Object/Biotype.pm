@@ -39,7 +39,7 @@ __PACKAGE__->meta->setup(
     }
   ],
 
-  trackable             => 1,
+  trackable             => 0,
 
   title_column          => 'name',
 

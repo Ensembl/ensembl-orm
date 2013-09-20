@@ -35,6 +35,7 @@ sub trackable {
   ## @param Flag if on will set up the trackable fields (ignores the off flag)
   my ($self, $flag) = @_;
 
+  # Core suggestion: if (! $ENV{ENS_NOTRACKING} && $flag) {
   if ($flag) {
 
     my %columns       = $self->_trackable_columns;

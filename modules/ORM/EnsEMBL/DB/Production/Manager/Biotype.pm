@@ -3,7 +3,7 @@ package ORM::EnsEMBL::DB::Production::Manager::Biotype;
 use strict;
 use warnings;
 
-use Bio::EnsEMBL::Utils::Exception qw( throw );
+use ORM::EnsEMBL::Utils::Exception;
 use ORM::EnsEMBL::DB::Production::Object::Biotype;
 
 use base qw(ORM::EnsEMBL::Rose::Manager);
