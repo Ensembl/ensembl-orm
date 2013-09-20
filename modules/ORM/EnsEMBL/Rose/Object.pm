@@ -1,10 +1,6 @@
 package ORM::EnsEMBL::Rose::Object;
 
-### NAME: EnsEMBL::Rose::ORM::Object
-### Should be used only as a base class, and for a Rose-based object only
-
-### DESCRIPTION:
-### This module's children provide access to non-genomic databases, using the Rose::DB::Object suite
+### Abstract base class for rose based data objects
 
 use strict;
 use warnings;
@@ -24,10 +20,11 @@ use constant {
   DEBUG_SQL     => undef,         ## Warns out all the mysql queries if flag is set '1'
 };
 
-__PACKAGE__->meta->error_mode('return');    ## When debugging, change from 'return' to 'carp'/'cluck'/'confess'/'croak' to produce the desired Carp behaviour
-__PACKAGE__->meta->column_type_class(       ## Add extra column type(s)
-  'datastructure' => 'ORM::EnsEMBL::Rose::CustomColumn::DataStructure',
-  'datamap'       => 'ORM::EnsEMBL::Rose::CustomColumn::DataMap',
+__PACKAGE__->meta->error_mode('return');          ## When debugging, change from 'return' to 'carp'/'cluck'/'confess'/'croak' to produce the desired Carp behaviour
+__PACKAGE__->meta->column_type_class(@$_) for (   ## Add custom column types
+  ['datastructure'      => 'ORM::EnsEMBL::Rose::CustomColumn::DataStructure'    ],
+  ['datamap'            => 'ORM::EnsEMBL::Rose::CustomColumn::DataMap'          ],
+  ['serialised_object'  => 'ORM::EnsEMBL::Rose::CustomColumn::SerialisedObject' ]
 );
 
 sub save {
