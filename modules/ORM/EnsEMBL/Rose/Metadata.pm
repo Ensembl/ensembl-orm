@@ -25,7 +25,7 @@ sub setup {
   my @args;
 
   ## sort arguments to keep auto, table name, columns and relationships before any other keys (to make sure virtual columns, virtual relationships are initiated after columns and relationships)
-  splice @args, ($_ =~ /^(table|columns|relationships|auto)$/ ? 0 : @args), 0, $_, $params{$_} for keys %params;
+  splice @args, ($_ =~ /^(table|columns|relationships|auto|auto_initialize)$/ ? 0 : @args), 0, $_, $params{$_} for keys %params;
 
   return $self->SUPER::setup(@args);
 }
@@ -90,6 +90,13 @@ sub datastructure_columns {
   ## @params List of: Column objects or hashref with structure {name => column_name, trusted => 1} or just name string (optional)
   ## @return Array or arrayref of the column objects
   return shift->_hybrid_columns('datastructure', @_);
+}
+
+sub serialised_object_columns {
+  ## Returns the existing serialised object columns or upgrades existing columns to serialised object columns
+  ## @params List of: Column objects or hashref with structure {name => column_name, gzip => 1} or just name string (optional)
+  ## @return Array or arrayref of the column objects
+  return shift->_hybrid_columns('serialised_object', @_);
 }
 
 sub virtual_columns {
