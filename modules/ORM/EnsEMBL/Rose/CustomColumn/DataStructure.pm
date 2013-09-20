@@ -1,11 +1,10 @@
 package ORM::EnsEMBL::Rose::CustomColumn::DataStructure;
 
-### Name: ORM::EnsEMBL::Rose::CustomColumn::DataStructure
 ### Class for column type 'datastructure' for saving a Hash or Array
-
 ### An extra boolean key 'trusted' is required (defaults to value being false) to initiate the column during AnyRoseObject->meta->setup (see &trusted below)
 
 use strict;
+use warnings;
 
 use ORM::EnsEMBL::Rose::CustomColumnValue::DataStructure;
 

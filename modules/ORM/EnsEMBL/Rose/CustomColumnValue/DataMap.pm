@@ -3,6 +3,7 @@ package ORM::EnsEMBL::Rose::CustomColumnValue::DataMap;
 ## Class representing the value provided to column type 'datamap'
 
 use strict;
+use warnings;
 
 use ORM::EnsEMBL::Utils::Exception;
 

@@ -4,6 +4,7 @@ package ORM::EnsEMBL::Rose::CustomColumn::SerialisedObject;
 ### An extra boolean key 'gzip' is required (defaults to value being false) to compress the data when saving to db
 
 use strict;
+use warnings;
 
 use ORM::EnsEMBL::Rose::CustomColumnValue::SerialisedObject;
 
