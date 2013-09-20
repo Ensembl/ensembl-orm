@@ -266,6 +266,7 @@ sub _hybrid_columns {
     }
     my $ctype = $col->type;
     if ($ctype ne $type) {
+      $self->load_column_class($col_classes->{$type}); #undocumented method
       $col_classes->{$type}->new($col, $params);
     }
   }
