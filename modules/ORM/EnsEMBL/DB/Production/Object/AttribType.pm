@@ -16,7 +16,7 @@ __PACKAGE__->meta->setup(
     is_current      => {type => 'int', 'default' => 1,      not_null => 1}
   ],
 
-  trackable             => 0,
+  trackable             => 1,
 
   unique_key            => ['code'],
 
