@@ -8,7 +8,7 @@ use Exporter    qw(import);
 
 use ORM::EnsEMBL::Utils::Exception;
 
-our @EXPORT = qw(dynamic_use add_method random_string encrypt_password);
+our @EXPORT_OK = qw(dynamic_use add_method random_string encrypt_password);
 
 sub dynamic_use {
   ## Dynamically does a 'use' of the class with the given name
@@ -51,3 +51,5 @@ sub encrypt_password {
   ## @param Password string
   return md5_hex($_[0]);
 }
+
+1;
