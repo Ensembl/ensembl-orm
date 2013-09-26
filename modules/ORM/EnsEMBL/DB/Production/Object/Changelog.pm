@@ -27,6 +27,7 @@ __PACKAGE__->meta->setup(
     db_type_affected      => {type => 'set',  'values' => [qw(cdna core funcgen otherfeatures rnaseq variation vega)]},
     mitochondrion         => {type => 'enum', 'values' => [qw(Y N changed)], 'default' => 'N'},
     priority              => {type => 'integer', 'not_null' => 1, 'default' => 2},
+    category              => {type => 'enum', 'values' => [qw(genebuild variation regulation alignment web schema other)], 'default' => 'other'},
     is_current            => {type => 'integer', 'not_null' => 1, 'default' => 1}
   ],
 
