@@ -8,7 +8,7 @@ package ORM::EnsEMBL::Rose::ExternalRelationship;
 use strict;
 
 use ORM::EnsEMBL::Utils::Exception;
-use ORM::EnsEMBL::Utils::Helper qw(dynamic_use add_method);
+use ORM::EnsEMBL::Utils::Helper qw(add_method);
 
 sub new {
   ## @constructor
@@ -17,12 +17,7 @@ sub new {
   ##  - type        Type of relationship - 'one to one' etc
   ##  - column_map  Hashref {internal_column => external_column} defining the link between relationship
   ##  - class       Class name of the object mapped
-  ## @exception ORMException::ObjectClassMissingException if the class for the related object is not found
   my ($class, $params) = @_;
-
-  $params->{'class'}              or throw('No class name provided for external relationship.'); 
-  dynamic_use($params->{'class'}) or throw("External relationship mapping class '$params->{'class'}' could not be found.");
-
   return bless $params, $class;
 }
 
