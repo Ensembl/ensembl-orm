@@ -13,13 +13,14 @@ our @EXPORT_OK = qw(dynamic_use add_method random_string encrypt_password);
 sub dynamic_use {
   ## Dynamically does a 'use' of the class with the given name
   ## @param Class name
-  ## @return 1 if successful, 0 otherwise
+  ## @return Class name if successfully loaded
+  ## @exception If class could not be loaded
   my $classname = shift;
-
+  throw('Module name is missing') unless $classname;
   eval "require $classname";
-  return 0 if $@;
+  throw("Module '$classname' could not be loaded: $@") if $@;
   $classname->import;
-  return 1;
+  return $classname;
 }
 
 sub add_method {
