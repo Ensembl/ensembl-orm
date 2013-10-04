@@ -1,15 +1,19 @@
 package ORM::EnsEMBL::Rose::Metadata;
 
-## Name: ORM::EnsEMBL::Rose::Metadata
 ## Metadata class for all Rose Objects
+## Limitation - Setting up trackable relationships depends upon if the db was registered with a trackable option as true (in register_database).
+##              If the DB is changed after the setup, the new trackable value for the db has no effect, ie. it does not dynamically add or remove
+##              the trackable relationships.
 
 use strict;
+use warnings;
 
 use ORM::EnsEMBL::Rose::VirtualColumn;
 use ORM::EnsEMBL::Rose::VirtualRelationship;
 use ORM::EnsEMBL::Rose::ExternalRelationship;
 
 use ORM::EnsEMBL::Utils::Exception;
+use ORM::EnsEMBL::Utils::Helper qw(dynamic_use);
 
 use base qw(Rose::DB::Object::Metadata);
 
@@ -35,7 +39,6 @@ sub trackable {
   ## @param Flag if on will set up the trackable fields (ignores the off flag)
   my ($self, $flag) = @_;
 
-  # Core suggestion: if (! $ENV{ENS_NOTRACKING} && $flag) {
   if ($flag) {
 
     my %columns       = $self->_trackable_columns;
@@ -45,38 +48,26 @@ sub trackable {
       $self->column($_, $columns{$_});
     }
 
-    my $add_relationship = $self->class->ROSE_DB_NAME eq ORM::EnsEMBL::DB::Accounts::Object->ROSE_DB_NAME ? 'relationship' : 'external_relationship';
-    for (keys %relationships) {
-
-      $self->$add_relationship($_, {
-        'type'        => 'many to one',
-        'class'       => 'ORM::EnsEMBL::DB::Accounts::Object::User',
-        'column_map'  => { $relationships{$_} => 'user_id' }
-      });
+    if ($self->class->init_db->trackable) {
+      for (keys %relationships) {
+        $self->external_relationship($_, {
+          'type'        => 'many to one',
+          'class'       => 'ORM::EnsEMBL::DB::Accounts::Object::User',
+          'column_map'  => { $relationships{$_} => 'user_id' }
+        });
+      }
     }
 
     $self->{'__ens_trackable'} = 1;
   }
 
-  return $self->{'__ens_trackable'} ||= 0;
+  return $self->{'__ens_trackable'} || 0;
 }
 
 sub trackable_column_names {
   ## Gets the list of all the trackable column names if the object is trackable
   my $self = shift;
   return [ $self->trackable ? keys %{{$self->_trackable_columns}} : () ];
-}
-
-sub column_is_trackable {
-  ## TODO - remove this one and use trackable_column_names instead
-  ## Tells whether the given column is one among the trackable columns
-  ## @param Column object or name
-  my ($self, $column) = @_;
-  $column = $column->name if ref $column;
-
-  my %trackable_columns = $self->_trackable_columns;
-
-  return exists $trackable_columns{$column};
 }
 
 sub datamap_columns {
@@ -182,19 +173,28 @@ sub inactive_flag_value {
 }
 
 sub external_relationship {
-  ## Gets/sets an external relationship
+  ## Gets/sets an external relationship - ie. relationship between two tables that exist on different databases
+  ## While setting, if both tables exist on the same db, it will set it as a 'relationship' instead of an 'external_relationship'
   ## @param External relation name
   ## @param Hashref for keys: (optional - will return the existing saved relationship if missed)
   ##  - class       Name of the class of the related object
-  ##  - column_map  Hashref of internal_column => external column mapping the relationshop
+  ##  - column_map  Hashref of internal_column => external column mapping the relationship
   ##  - type        one to one, many to one etc
   ## @return External relationship object (or undef if no relation found for the given name)
+  ## @exception If there's a problem loading related class
   my ($self, $relationship_name, $params) = @_;
 
   my $object_class = $self->class;
   my $key_name     = $self->EXTERNAL_RELATIONS_KEY_NAME;
 
   if ($params) {
+
+   	my $related_object_class = dynamic_use($params->{'class'});
+
+    if ($related_object_class->ROSE_DB_NAME eq $object_class->ROSE_DB_NAME) {
+      return $self->relationship($relationship_name, $params);
+    }
+
     my $relationship = $self->{$key_name}{$relationship_name} = ORM::EnsEMBL::Rose::ExternalRelationship->new({'name', $relationship_name, %$params});
     $relationship->make_methods('target_class' => $object_class);
   }
