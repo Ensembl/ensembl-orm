@@ -62,14 +62,7 @@ sub to_string {
   ## Stringifies the datastructure
   ## @return String
   my $self = shift;
-
-  my $str = Data::Dumper->new([$self->raw]);
-  $str->Sortkeys(1);
-  $str->Useqq(1);
-  $str = $str->Dump;
-  $str = join '', map {$_ =~ s/^\s*//; $_} split "\n", $str;
-  $str =~ s/^[^\=]+\=\s*|\;$//g;
-  return $str;
+  return Data::Dumper->new([$self->raw])->Sortkeys(1)->Useqq(1)->Terse(1)->Indent(0)->Dump;
 }
 
 sub raw {
