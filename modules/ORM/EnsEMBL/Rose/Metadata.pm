@@ -13,7 +13,7 @@ use ORM::EnsEMBL::Rose::VirtualRelationship;
 use ORM::EnsEMBL::Rose::ExternalRelationship;
 
 use ORM::EnsEMBL::Utils::Exception;
-use ORM::EnsEMBL::Utils::Helper qw(dynamic_use);
+use ORM::EnsEMBL::Utils::Helper qw(load_package);
 
 use base qw(Rose::DB::Object::Metadata);
 
@@ -189,7 +189,7 @@ sub external_relationship {
 
   if ($params) {
 
-   	my $related_object_class = dynamic_use($params->{'class'});
+   	my $related_object_class = load_package($params->{'class'});
 
     if ($related_object_class->ROSE_DB_NAME eq $object_class->ROSE_DB_NAME) {
       return $self->relationship($relationship_name, $params);
