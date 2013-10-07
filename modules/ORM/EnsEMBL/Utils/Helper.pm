@@ -8,10 +8,10 @@ use Exporter    qw(import);
 
 use ORM::EnsEMBL::Utils::Exception;
 
-our @EXPORT_OK = qw(dynamic_use add_method random_string encrypt_password);
+our @EXPORT_OK = qw(load_package add_method random_string encrypt_password);
 
-sub dynamic_use {
-  ## Dynamically does a 'use' of the class with the given name
+sub load_package {
+  ## Loads ('require', not 'use') a package with the given name
   ## @param Class name
   ## @return Class name if successfully loaded
   ## @exception If class could not be loaded
@@ -19,7 +19,6 @@ sub dynamic_use {
   throw('Module name is missing') unless $classname;
   eval "require $classname";
   throw("Module '$classname' could not be loaded: $@") if $@;
-  $classname->import;
   return $classname;
 }
 
