@@ -93,17 +93,17 @@ sub admin_memberships {
 
 sub nonadmin_memberships {
   ## Gets all the non-admin memberships for the user
-  return shift->find_memberships('query' => ['level' => 'member', 'status' => 'active', 'member_status' => 'active']);
+  return shift->find_memberships('query' => ['level' => 'member', 'status' => 'active', 'member_status' => 'active', '!group.type' => 'hidden']);
 }
 
 sub active_memberships {
   ## Gets all the active memberships (along with the related active groups) for the user
-  return shift->find_memberships('with_objects' => 'group', 'query' => ['status' => 'active', 'member_status' => 'active', 'group.status' => 'active']);
+  return shift->find_memberships('with_objects' => 'group', 'query' => ['status' => 'active', 'member_status' => 'active', 'group.status' => 'active', '!group.type' => 'hidden' ]);
 }
 
 sub accessible_memberships {
   ## Gets all the active memberships (together with inactive groups for admin user) (along with the related active groups)
-  return shift->find_memberships('with_objects' => 'group', 'query' => ['or' => ['level' => 'administrator', 'group.status' => 'active'], 'status' => 'active', 'member_status' => 'active']);
+  return shift->find_memberships('with_objects' => 'group', 'query' => ['or' => ['level' => 'administrator', and => [ 'group.status' => 'active', '!group.type' => 'hidden' ]], 'status' => 'active', 'member_status' => 'active']);
 }
 
 sub create_new_membership_with_group {

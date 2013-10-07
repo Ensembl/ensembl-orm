@@ -18,7 +18,7 @@ __PACKAGE__->meta->setup(
     name                  => { 'type' => 'varchar', 'length' => '255' },
     blurb                 => { 'type' => 'text' },
     data                  => { 'type' => 'text' },
-    type                  => { 'type' => 'enum', 'values' => [qw(open restricted private)], 'default' => 'restricted' },
+    type                  => { 'type' => 'enum', 'values' => [qw(open restricted private hidden)], 'default' => 'restricted' },
     status                => { 'type' => 'enum', 'values' => [qw(active inactive)], 'default' => 'active' }
   ],
 
