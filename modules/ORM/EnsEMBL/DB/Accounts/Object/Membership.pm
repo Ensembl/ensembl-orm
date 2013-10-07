@@ -34,7 +34,7 @@ __PACKAGE__->meta->setup(
     group_member_id       => {type => 'serial', primary_key => 1, not_null => 1},
     webgroup_id           => {type => 'integer', 'alias' => 'group_id'},
     user_id               => {type => 'integer'},
-    level                 => {type => 'enum', 'values' => [qw(member administrator)]},
+    level                 => {type => 'enum', 'values' => [qw(member administrator)],           'default' => 'member'  },
     status                => {type => 'enum', 'values' => [qw(active inactive pending barred)], 'default' => 'active'  },  #status set by the admin
     member_status         => {type => 'enum', 'values' => [qw(active inactive pending barred)], 'default' => 'inactive'},  #status set by the user
     data                  => {type => 'datamap'}
