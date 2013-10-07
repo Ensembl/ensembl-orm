@@ -7,6 +7,7 @@ use strict;
 use warnings;
 
 use ORM::EnsEMBL::Utils::Exception;
+use ORM::EnsEMBL::Utils::Helper qw(load_package);
 
 use base qw(Rose::DB::Object::Manager);
 
@@ -33,6 +34,8 @@ sub get_objects {
   ## @note If an externally related object is not directly related to the object, make sure the intermediate object is included in with_objects key.
   my ($self, %params) = shift->normalize_get_objects_args(@_);
 
+  my $object_class = load_package($params{'object_class'} || $self->object_class);
+
   ######### This method is also called by Rose API sometimes. ###########
   ###            We don't want to override it for Rose                ###
   my $caller = caller;                                                ###
@@ -40,7 +43,7 @@ sub get_objects {
   #########                   That's it!                      ###########
 
   my $with_e_objects  = delete $params{'with_external_objects'};
-  $params{'debug'}    = 1 if ($params{'object_class'} || $self->object_class)->DEBUG_SQL;
+  $params{'debug'}    = 1 if $object_class->DEBUG_SQL;
 
   $self->_add_active_only_query(\%params) if exists $params{'active_only'} ? delete $params{'active_only'} : 1;
 
@@ -89,7 +92,7 @@ sub get_objects {
   }
 
   # save the external objects to the corresponding linked rose objects
-  my $hash_key_name = $self->object_class->meta->EXTERNAL_RELATIONS_KEY_NAME;
+  my $hash_key_name = $object_class->meta->EXTERNAL_RELATIONS_KEY_NAME;
   while (my $object_related_to_external_object = shift @$internal_objects) {
     my $relationship_name = shift @$internal_objects;
     my $path              = shift @$internal_objects;
