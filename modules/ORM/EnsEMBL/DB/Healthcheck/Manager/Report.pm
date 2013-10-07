@@ -32,10 +32,7 @@ sub count_failed_for_session {
 
   unless($params->{'include_manual_ok'}) {
     $arg{'with_objects'} = 'annotation';
-    push @{$arg{'query'}}, ('or', [
-      'annotation.action'   => undef,
-      '!annotation.action'  => [ $self->object_class->meta->relationship('annotation')->class->annotation_actions('manual_ok', 'keys_only') ]
-    ]);
+    push @{$arg{'query'}}, $self->_manual_ok_annotation_query;
   }
 
   return $self->get_objects(%arg);
@@ -71,10 +68,7 @@ sub fetch_for_session {
     $args->{'with_objects'}           = ['annotation'];
     $args->{'with_external_objects'}  = ['annotation.created_by_user', 'annotation.modified_by_user'];
     if ($params->{'with_annotations'} eq 'exclude_manual_ok') {
-      push @{$args->{'query'}}, ('or', [
-        'annotation.action'  => undef,
-        '!annotation.action' => [ $self->object_class->meta->relationship('annotation')->class->annotation_actions('manual_ok', 'keys_only') ],
-      ]);
+      push @{$args->{'query'}}, $self->_manual_ok_annotation_query;
     }
   }
 
@@ -111,6 +105,14 @@ sub _fetch_for_distinct {
       : ['last_session_id', $params->{'last_session_id'}],
   );
   return $objects;
+}
+
+sub _manual_ok_annotation_query {
+  ## @private
+  return  ('or', [
+    'annotation.action'  => undef,
+    '!annotation.action' => [ qw(manual_ok manual_ok_all_releases manual_ok_this_assembly manual_ok_this_genebuild manual_ok_this_regulatory_build healthcheck_bug) ],
+  ]);
 }
 
 1;
