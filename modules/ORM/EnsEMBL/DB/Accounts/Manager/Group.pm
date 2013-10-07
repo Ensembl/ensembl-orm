@@ -3,11 +3,7 @@ package ORM::EnsEMBL::DB::Accounts::Manager::Group;
 use strict;
 use warnings;
 
-use ORM::EnsEMBL::DB::Accounts::Object::Group;
-
 use base qw(ORM::EnsEMBL::Rose::Manager);
-
-sub object_class { 'ORM::EnsEMBL::DB::Accounts::Object::Group' }
 
 sub fetch_with_members {
   ## Fetchs group(s) with given id(s) along with it's members

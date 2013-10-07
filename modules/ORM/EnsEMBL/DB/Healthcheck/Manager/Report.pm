@@ -3,11 +3,7 @@ package ORM::EnsEMBL::DB::Healthcheck::Manager::Report;
 use strict;
 use warnings;
 
-use ORM::EnsEMBL::DB::Healthcheck::Object::Report;
-
 use base qw(ORM::EnsEMBL::Rose::Manager);
-
-sub object_class { 'ORM::EnsEMBL::DB::Healthcheck::Object::Report' }
 
 sub count_failed_for_session {
   ## Counts reports failed during the given session, grouped wrt given column name

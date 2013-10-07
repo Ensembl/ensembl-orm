@@ -5,10 +5,6 @@ use warnings;
 
 use base qw(ORM::EnsEMBL::Rose::Manager);
 
-use ORM::EnsEMBL::DB::Accounts::Object::Login;
-
-sub object_class { 'ORM::EnsEMBL::DB::Accounts::Object::Login' }
-
 sub get_with_user {
   ## Gets a Login object for given identity column value, can be an openid url or email for local accounts OR primary key
   ## @param Identity value, or primary key value

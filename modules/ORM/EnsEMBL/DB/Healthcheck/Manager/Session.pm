@@ -3,11 +3,7 @@ package ORM::EnsEMBL::DB::Healthcheck::Manager::Session;
 use strict;
 use warnings;
 
-use ORM::EnsEMBL::DB::Healthcheck::Object::Session;
-
 use base qw(ORM::EnsEMBL::Rose::Manager);
-
-sub object_class { 'ORM::EnsEMBL::DB::Healthcheck::Object::Session' }
 
 sub fetch_single {
   ## fetches first or last session from the db for the given release

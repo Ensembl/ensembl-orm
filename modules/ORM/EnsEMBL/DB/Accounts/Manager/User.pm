@@ -5,10 +5,6 @@ use warnings;
 
 use base qw(ORM::EnsEMBL::Rose::Manager);
 
-use ORM::EnsEMBL::DB::Accounts::Object::User;
-
-sub object_class { 'ORM::EnsEMBL::DB::Accounts::Object::User' }
-
 sub get_by_id {
   ## Gets user by id
   ## @param String id
