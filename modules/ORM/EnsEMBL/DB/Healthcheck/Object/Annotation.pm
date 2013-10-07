@@ -14,7 +14,7 @@ __PACKAGE__->meta->setup(
     session_id    => {type => 'integer'},
     action        => {
       'type'          => 'enum', 
-      'values'        => [ __PACKAGE__->annotation_actions('keys_only') ]
+      'values'        => [qw(manual_ok manual_ok_all_releases manual_ok_this_assembly manual_ok_this_genebuild manual_ok_this_regulatory_build healthcheck_bug under_review fixed note)]
     },
     comment       => {type => 'text'},
   ],
@@ -31,27 +31,5 @@ __PACKAGE__->meta->setup(
     },
   ]
 );
-
-sub annotation_actions {
-  ## @static
-  my ($class, @flags) = @_;
-  my $flags = { map {$_ => 1} @flags };
-  my @actions = (
-    'manual_ok'                       => 'Manual ok: not a problem for this release',
-    'manual_ok_all_releases'          => 'Manual ok all release: not a problem for this species',
-    'manual_ok_this_assembly'         => 'Manual ok this assembly',
-    'manual_ok_this_genebuild'        => 'Manual ok this genebuild',
-    'manual_ok_this_regulatory_build' => 'Manual ok this regulatory build',
-    'healthcheck_bug'                 => 'Healthcheck bug: error should not appear, requires changes to healthcheck',
-  );
-  unless (exists $flags->{'manual_ok'}) {
-    push @actions, (
-      'under_review'                  => 'Under review: Will be fixed/reviewed',
-      'fixed'                         => 'Fixed',
-      'note'                          => 'Note or comment',
-    );
-  }
-  return exists $flags->{'keys_only'} ? keys %{{@actions}} : @actions;
-}
 
 1;
