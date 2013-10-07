@@ -34,7 +34,7 @@ sub get_objects {
   ## @note If an externally related object is not directly related to the object, make sure the intermediate object is included in with_objects key.
   my ($self, %params) = shift->normalize_get_objects_args(@_);
 
-  my $object_class = load_package($params{'object_class'} || $self->object_class);
+  my $object_class = load_package($params{'object_class'} || $self->object_class_name);
 
   ######### This method is also called by Rose API sometimes. ###########
   ###            We don't want to override it for Rose                ###
@@ -103,13 +103,16 @@ sub get_objects {
 }
 
 sub object_class {
-  ## Returns the corresponding object class - defaults to the one in same namespace
-  ## Override in the child classes, if required
-  if ($_[0] eq __PACKAGE__) {
-    throw("Method object_class can not be called on base Manager class. Either provide 'object_class' as a key in the argument hash of the required method or call this method on Manager drived class.");
-  }
-  (my $object_class = shift) =~ s/::Manager::/::Object::/;
-  return $object_class;
+  ## Returns the corresponding object class after loading it
+  ## Don't override this one in child class, override object_class_name method instead
+  return load_package(shift->object_class_name);
+}
+
+sub object_class_name {
+  ## Returns the name of the object class for the manager
+  ## Override this in child class if namespace for the object class is different (although not recommended to keep it different)
+  throw("Method object_class_name can not be called on base Manager class. Either provide 'object_class' as a key in the argument hash of the required method or call 'object_class_name' on Manager drived class.") if $_[0] eq __PACKAGE__;
+  return $_[0] =~ s/::Manager::/::Object::/r;
 }
 
 sub fetch_by_primary_key {
@@ -133,7 +136,7 @@ sub fetch_by_primary_keys {
   my ($self, $ids, $params) = @_;
 
   $params->{'query'} ||= [];
-  push @{$params->{'query'}}, ($params->{'object_class'} || $self->object_class)->meta->primary_key_column_names->[0], $ids;
+  push @{$params->{'query'}}, load_package($params->{'object_class'} || $self->object_class_name)->meta->primary_key_column_names->[0], $ids;
 
   return @$ids ? $self->get_objects(%$params) : undef;
 }
@@ -242,7 +245,7 @@ sub _add_active_only_query {
   ## Override in the child class if required to provide some custom param in query key of args passed to get_objects
   ## @param HashRef of params being passed to get_objects methods after normalisation
   my ($self, $params) = @_;
-  my $meta_class = ($params->{'object_class'} || $self->object_class)->meta;
+  my $meta_class = load_package($params->{'object_class'} || $self->object_class_name)->meta;
 
   if (my $inactive_flag_column = $meta_class->inactive_flag_column) {
     $params->{'query'} ||= [];
