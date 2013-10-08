@@ -62,7 +62,7 @@ sub fetch_with_given_job {
 
   return $self->get_objects(
     'with_objects'  => ['ticket', 'ticket.job', exists $params->{'result_id'} ? 'ticket.job.result' : ()],
-    'multi_many_ok' => 1,debug => 1,
+    'multi_many_ok' => 1,
     'query'         => $query
   )->[0];
 }
