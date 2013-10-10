@@ -12,4 +12,14 @@ __PACKAGE__->meta->setup(
   auto_initialize => []
 );
 
+{
+  my $job_relationship = __PACKAGE__->meta->relationship('job');
+
+  $job_relationship->method_name('count', 'job_count');
+  $job_relationship->make_methods(
+    preserve_existing => 1,
+    types             => [ 'count' ]
+  );
+}
+
 1;
