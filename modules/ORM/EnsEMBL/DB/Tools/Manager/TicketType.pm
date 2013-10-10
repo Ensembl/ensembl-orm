@@ -3,7 +3,6 @@ package ORM::EnsEMBL::DB::Tools::Manager::TicketType;
 use strict;
 use warnings;
 
-use ORM::EnsEMBL::DB::Tools::Object::TicketType;
 use ORM::EnsEMBL::Utils::Exception;
 
 use base qw(ORM::EnsEMBL::Rose::Manager);
