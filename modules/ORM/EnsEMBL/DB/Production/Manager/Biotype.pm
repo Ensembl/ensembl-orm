@@ -82,7 +82,7 @@ sub group_members {
 			 query => [
 				   biotype_group => $group
 				  ],
-			 distict => 1)};
+			 distinct => 1)};
 
   my @members = keys %members;
   return \@members;
