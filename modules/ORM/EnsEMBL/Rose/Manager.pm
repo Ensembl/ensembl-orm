@@ -130,7 +130,8 @@ sub object_class_name {
   ## Returns the name of the object class for the manager
   ## Override this in child class if namespace for the object class is different (although not recommended to keep it different)
   throw("Method object_class_name can not be called on base Manager class. Either provide 'object_class' as a key in the argument hash of the required method or call 'object_class_name' on Manager drived class.") if $_[0] eq __PACKAGE__;
-  return $_[0] =~ s/::Manager::/::Object::/r;
+  (my $rtn = $_[0]) =~ s/::Manager::/::Object::/;
+  return $rtn;
 }
 
 sub fetch_by_primary_key {
