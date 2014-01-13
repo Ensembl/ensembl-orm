@@ -28,7 +28,7 @@ __PACKAGE__->meta->setup(
 
   columns       => [
     attrib_type_id  => {type => 'serial', primary_key => 1, not_null => 1},
-    code            => {type => 'varchar', 'length' => 15,  not_null => 1},		
+    code            => {type => 'varchar', 'length' => 20,  not_null => 1},		
     name            => {type => 'varchar', 'length' => 255, not_null => 1},			
     description     => {type => 'text'},
     is_current      => {type => 'int', 'default' => 1,      not_null => 1}
