@@ -110,7 +110,8 @@ sub group_members {
 
     Arg [0]    : Instance of Bio::EnsEMBL::Gene|Transcript
     Arg [1]    : String; the name of the group
-    Description: Returns the biotypes having the group specified as argument
+    Description: Returns true/false whether the biotype of the feature
+                 belongs/do not belong to a group
     Returntype : 0/1 if the biotype belongs/do not belong to the group
     Exceptions : if the group does not exist or if the first argument is
                  not a gene or transcript
@@ -142,5 +143,24 @@ sub is_member_of_group {
   return 0 unless scalar @{$biotypes};
   return 1;
 }
+
+=head2 belongs_to_groups
+
+    Arg [0]    : Instance of Bio::EnsEMBL::Gene|Transcript
+    Description: Returns the group names that include the bioype
+                 of the given feature object
+    Returntype : ArrayRef; the list of strings of group names
+
+=cut
+
+sub belongs_to_groups {
+  my ($self, $feature) = @_;
+
+  my @groups = grep { $self->is_member_of_group($feature, $_) }
+    @{$self->fetch_all_biotype_groups()};
+
+  return \@groups;
+}
+
 
 1;
