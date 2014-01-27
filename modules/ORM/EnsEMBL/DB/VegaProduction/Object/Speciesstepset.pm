@@ -10,15 +10,20 @@ __PACKAGE__->meta->setup(
   columns => [
     'speciesstepset_id'
                    => { type => 'serial', primary_key => 1, not_null => 1 },
-    speciesstep_id => { type => 'int' },
     description    => { type => 'varchar', length => 255 },
   ],
 
   relationships => [
     speciesstep => {
-      type => 'many to one',
-      class => 'ORM::EnsEMBL::DB::VegaProduction::Object::Speciesstep',
-      key_columns => { speciesstep_id => 'speciesstep_id' },
+      type => 'many to many',
+      map_class =>
+        'ORM::EnsEMBL::DB::VegaProduction::Object::Speciesstepsetmember',
+    },
+    speciesstepmember => {
+      type => 'one to many',
+      class =>
+        'ORM::EnsEMBL::DB::VegaProduction::Object::Speciesstepsetmember',
+      key_columns => { speciesstepset_id => 'speciesstepset_id' },
     },
   ],
 );

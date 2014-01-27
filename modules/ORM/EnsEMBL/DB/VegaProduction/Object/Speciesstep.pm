@@ -24,6 +24,11 @@ __PACKAGE__->meta->setup(
       class => 'ORM::EnsEMBL::DB::VegaProduction::Object::Species',
       key_columns => { species_id => 'species_id' },
     },
+    speciesstepset => {
+      type => 'many to many',
+      map_class =>
+        'ORM::EnsEMBL::DB::VegaProduction::Object::Speciesstepsetmember',
+    },
   ],
 );
 
