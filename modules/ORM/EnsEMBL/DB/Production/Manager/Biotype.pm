@@ -54,7 +54,7 @@ sub fetch_biotype {
   
   throw sprintf "Feature %s: unable to fetch the corresponding biotype object", $feature->display_id
     unless scalar @{$biotypes};
-  throw sprintf "Feature %s: fetched multiple biotype objects for feature %s", $feature->display_id
+  throw sprintf "Feature %s: fetched multiple biotype objects", $feature->display_id
     unless scalar @{$biotypes} == 1;
   
   return $biotypes->[0];
