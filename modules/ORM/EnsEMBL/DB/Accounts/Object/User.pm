@@ -21,7 +21,7 @@ package ORM::EnsEMBL::DB::Accounts::Object::User;
 use strict;
 use warnings;
 
-use base qw(ORM::EnsEMBL::DB::Accounts::Object::RecordOwner);
+use parent qw(ORM::EnsEMBL::DB::Accounts::Object::RecordOwner);
 
 use ORM::EnsEMBL::Utils::Helper qw(random_string);
 

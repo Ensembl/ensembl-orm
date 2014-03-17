@@ -31,7 +31,7 @@ use ORM::EnsEMBL::Utils::Exception;
 use Rose::DB::Object::Helpers qw(as_tree forget_related has_loaded_related), {qw(clone_and_reset default_clone_and_reset)};  ## Some extra methods that can be called on any child class object
 use Rose::DateTime::Util qw(parse_date);
 
-use base qw(Rose::DB::Object);
+use parent qw(Rose::DB::Object);
 
 use constant {
   ROSE_DB_NAME  => undef,         ## Name of the database connection as registered with Rose::DB (Override in child class)

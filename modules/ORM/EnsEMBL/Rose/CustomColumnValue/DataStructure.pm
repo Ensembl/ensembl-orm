@@ -27,7 +27,7 @@ use warnings;
 use Data::Dumper;
 use ORM::EnsEMBL::Utils::Exception;
 
-use base qw(ORM::EnsEMBL::Rose::CustomColumnValue);
+use parent qw(ORM::EnsEMBL::Rose::CustomColumnValue);
 
 use overload (
   '""'  => 'to_string',

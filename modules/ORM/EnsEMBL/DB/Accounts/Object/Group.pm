@@ -24,7 +24,7 @@ package ORM::EnsEMBL::DB::Accounts::Object::Group;
 use strict;
 use warnings;
 
-use base qw(ORM::EnsEMBL::DB::Accounts::Object::RecordOwner);
+use parent qw(ORM::EnsEMBL::DB::Accounts::Object::RecordOwner);
 
 use constant RECORD_TYPE => 'group';
 

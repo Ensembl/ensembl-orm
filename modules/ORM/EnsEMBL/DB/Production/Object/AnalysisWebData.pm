@@ -21,7 +21,7 @@ package ORM::EnsEMBL::DB::Production::Object::AnalysisWebData;
 use strict;
 use warnings;
 
-use base qw(ORM::EnsEMBL::DB::Production::Object);
+use parent qw(ORM::EnsEMBL::DB::Production::Object);
 
 use constant ROSE_DB_NAME => 'production';
 

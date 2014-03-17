@@ -27,7 +27,7 @@ use IO::Compress::Gzip      qw(gzip $GzipError);
 
 use ORM::EnsEMBL::Utils::Exception;
 
-use base qw(ORM::EnsEMBL::Rose::CustomColumnValue);
+use parent qw(ORM::EnsEMBL::Rose::CustomColumnValue);
 
 sub inflate {
   ## Abstract method implementation

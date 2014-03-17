@@ -27,7 +27,7 @@ use warnings;
 use ORM::EnsEMBL::Utils::Exception;
 use ORM::EnsEMBL::Utils::Helper qw(load_package);
 
-use base qw(Rose::DB::Object::Manager);
+use parent qw(Rose::DB::Object::Manager);
 
 sub get_objects {
   ## @overrides

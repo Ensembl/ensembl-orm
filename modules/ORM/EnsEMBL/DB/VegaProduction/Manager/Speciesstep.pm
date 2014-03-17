@@ -3,7 +3,7 @@ package ORM::EnsEMBL::DB::VegaProduction::Manager::Speciesstep;
 use strict;
 use warnings;
 
-use base qw(ORM::EnsEMBL::Rose::Manager);
+use parent qw(ORM::EnsEMBL::Rose::Manager);
 
 sub find_step {
   my ($self,$process,$script,$species) = @_;

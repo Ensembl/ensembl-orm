@@ -21,7 +21,7 @@ package ORM::EnsEMBL::DB::Healthcheck::Object::Session;
 use strict;
 use warnings;
 
-use base qw(ORM::EnsEMBL::DB::Healthcheck::Object);
+use parent qw(ORM::EnsEMBL::DB::Healthcheck::Object);
 
 __PACKAGE__->meta->setup(
   table         => 'session',

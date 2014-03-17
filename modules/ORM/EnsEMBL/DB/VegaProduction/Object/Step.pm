@@ -3,7 +3,7 @@ package ORM::EnsEMBL::DB::VegaProduction::Object::Step;
 use strict;
 use warnings;
 
-use base qw(ORM::EnsEMBL::DB::VegaProduction::Object);
+use parent qw(ORM::EnsEMBL::DB::VegaProduction::Object);
 
 __PACKAGE__->meta->setup(
   table => 'step',

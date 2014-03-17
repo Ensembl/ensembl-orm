@@ -21,7 +21,7 @@ package ORM::EnsEMBL::DB::Healthcheck::Manager::Report;
 use strict;
 use warnings;
 
-use base qw(ORM::EnsEMBL::Rose::Manager);
+use parent qw(ORM::EnsEMBL::Rose::Manager);
 
 sub count_failed_for_session {
   ## Counts reports failed during the given session, grouped wrt given column name

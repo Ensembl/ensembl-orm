@@ -33,7 +33,7 @@ use ORM::EnsEMBL::Rose::ExternalRelationship;
 use ORM::EnsEMBL::Utils::Exception;
 use ORM::EnsEMBL::Utils::Helper qw(load_package);
 
-use base qw(Rose::DB::Object::Metadata);
+use parent qw(Rose::DB::Object::Metadata);
 
 use constant {
   EXTERNAL_RELATIONS_KEY_NAME => '__ens_external_relationships',

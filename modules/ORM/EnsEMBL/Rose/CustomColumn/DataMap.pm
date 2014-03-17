@@ -26,7 +26,7 @@ package ORM::EnsEMBL::Rose::CustomColumn::DataMap;
 
 ### Example:
 ### package MyObject;
-### use base qw(Rose::DB::Object);
+### use parent qw(Rose::DB::Object);
 ### __PACKAGE__->meta->setup(
 ###   columns => [
 ###     'data'  => {'type' => 'datamap', 'trusted' => 1, 'not_null' => 1} # trusted specifies that the value can always be trusted to eval into a hash without any errors
@@ -42,7 +42,7 @@ use warnings;
 
 use ORM::EnsEMBL::Rose::CustomColumnValue::DataMap;
 
-use base qw(ORM::EnsEMBL::Rose::CustomColumn::DataStructure);
+use parent qw(ORM::EnsEMBL::Rose::CustomColumn::DataStructure);
 
 sub init_custom_column {
   ## @override

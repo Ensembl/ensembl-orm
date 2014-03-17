@@ -21,7 +21,7 @@ package ORM::EnsEMBL::DB::Website::Object::HelpRecord;
 use strict;
 use warnings;
 
-use base qw(ORM::EnsEMBL::DB::Website::Object);
+use parent qw(ORM::EnsEMBL::DB::Website::Object);
 
 __PACKAGE__->meta->setup(
   table           => 'help_record',

@@ -21,7 +21,7 @@ package ORM::EnsEMBL::DB::Accounts::Manager::Group;
 use strict;
 use warnings;
 
-use base qw(ORM::EnsEMBL::Rose::Manager);
+use parent qw(ORM::EnsEMBL::Rose::Manager);
 
 sub fetch_with_members {
   ## Fetchs group(s) with given id(s) along with it's members

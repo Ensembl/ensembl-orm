@@ -42,7 +42,7 @@ package ORM::EnsEMBL::DB::Accounts::Object::Membership;
 use strict;
 use warnings;
 
-use base qw(ORM::EnsEMBL::DB::Accounts::Object);
+use parent qw(ORM::EnsEMBL::DB::Accounts::Object);
 
 ## Define schema
 __PACKAGE__->meta->setup(

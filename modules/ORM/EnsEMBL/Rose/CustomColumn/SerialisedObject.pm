@@ -26,7 +26,7 @@ use warnings;
 
 use ORM::EnsEMBL::Rose::CustomColumnValue::SerialisedObject;
 
-use base qw(
+use parent qw(
   ORM::EnsEMBL::Rose::CustomColumn
   Rose::DB::Object::Metadata::Column::Blob
 );

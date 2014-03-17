@@ -21,7 +21,7 @@ package ORM::EnsEMBL::DB::Production::Object::MetaKeySpecies;
 use strict;
 use warnings;
 
-use base qw(ORM::EnsEMBL::DB::Production::Object);
+use parent qw(ORM::EnsEMBL::DB::Production::Object);
 
 __PACKAGE__->meta->setup(
   table       => 'meta_key_species',

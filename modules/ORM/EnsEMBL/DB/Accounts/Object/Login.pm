@@ -21,7 +21,7 @@ package ORM::EnsEMBL::DB::Accounts::Object::Login;
 use strict;
 use warnings;
 
-use base qw(ORM::EnsEMBL::DB::Accounts::Object);
+use parent qw(ORM::EnsEMBL::DB::Accounts::Object);
 
 use ORM::EnsEMBL::Utils::Helper qw(random_string encrypt_password);
 

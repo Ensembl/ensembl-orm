@@ -25,7 +25,7 @@ use warnings;
 
 use ORM::EnsEMBL::Utils::Exception;
 
-use base qw(ORM::EnsEMBL::Rose::CustomColumnValue::DataStructure);
+use parent qw(ORM::EnsEMBL::Rose::CustomColumnValue::DataStructure);
 
 sub new {
   ## @override

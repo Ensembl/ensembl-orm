@@ -21,7 +21,7 @@ package ORM::EnsEMBL::DB::Accounts::Manager::Login;
 use strict;
 use warnings;
 
-use base qw(ORM::EnsEMBL::Rose::Manager);
+use parent qw(ORM::EnsEMBL::Rose::Manager);
 
 sub get_with_user {
   ## Gets a Login object for given identity column value, can be an openid url or email for local accounts OR primary key

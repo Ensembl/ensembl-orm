@@ -21,7 +21,7 @@ package ORM::EnsEMBL::DB::Tools::Object::JobMessage;
 use strict;
 use warnings;
 
-use base qw(ORM::EnsEMBL::DB::Tools::Object);
+use parent qw(ORM::EnsEMBL::DB::Tools::Object);
 
 __PACKAGE__->meta->setup(
   table           => 'job_message',

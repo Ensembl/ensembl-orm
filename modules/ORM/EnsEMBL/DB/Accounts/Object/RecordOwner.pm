@@ -24,7 +24,7 @@ package ORM::EnsEMBL::DB::Accounts::Object::RecordOwner;
 use strict;
 use warnings;
 
-use base qw(ORM::EnsEMBL::DB::Accounts::Object);
+use parent qw(ORM::EnsEMBL::DB::Accounts::Object);
 
 use constant RECORD_TYPE => '';
 

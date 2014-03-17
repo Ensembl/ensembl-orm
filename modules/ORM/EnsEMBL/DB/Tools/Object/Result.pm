@@ -21,7 +21,7 @@ package ORM::EnsEMBL::DB::Tools::Object::Result;
 use strict;
 use warnings;
 
-use base qw(ORM::EnsEMBL::DB::Tools::Object);
+use parent qw(ORM::EnsEMBL::DB::Tools::Object);
 
 __PACKAGE__->meta->setup(
   table           => 'result',

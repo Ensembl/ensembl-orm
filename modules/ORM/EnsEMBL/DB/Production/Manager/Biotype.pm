@@ -23,7 +23,7 @@ use warnings;
 
 use ORM::EnsEMBL::Utils::Exception;
 
-use base qw(ORM::EnsEMBL::Rose::Manager);
+use parent qw(ORM::EnsEMBL::Rose::Manager);
 
 =head2 fetch_biotype
 

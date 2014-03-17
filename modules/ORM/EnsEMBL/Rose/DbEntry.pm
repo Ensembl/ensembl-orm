@@ -23,7 +23,7 @@ package ORM::EnsEMBL::Rose::DbEntry;
 use strict;
 use warnings;
 
-use base qw(Rose::DB::Registry::Entry);
+use parent qw(Rose::DB::Registry::Entry);
 
 sub trackable {
   ## Saves the info about whether the database should respect the trackable info or not

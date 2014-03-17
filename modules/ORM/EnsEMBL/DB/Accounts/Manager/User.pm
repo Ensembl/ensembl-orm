@@ -21,7 +21,7 @@ package ORM::EnsEMBL::DB::Accounts::Manager::User;
 use strict;
 use warnings;
 
-use base qw(ORM::EnsEMBL::Rose::Manager);
+use parent qw(ORM::EnsEMBL::Rose::Manager);
 
 sub get_by_id {
   ## Gets user by id

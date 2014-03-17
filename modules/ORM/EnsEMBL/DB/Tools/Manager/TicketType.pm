@@ -23,7 +23,7 @@ use warnings;
 
 use ORM::EnsEMBL::Utils::Exception;
 
-use base qw(ORM::EnsEMBL::Rose::Manager);
+use parent qw(ORM::EnsEMBL::Rose::Manager);
 
 sub object_class { 'ORM::EnsEMBL::DB::Tools::Object::TicketType' }
 
