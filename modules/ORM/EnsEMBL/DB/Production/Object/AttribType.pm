@@ -51,4 +51,14 @@ __PACKAGE__->meta->setup(
   ]
 );
 
+__PACKAGE__->meta->column('description')->add_trigger(
+  'event' => 'deflate',
+  'name'  => 'remove_newline',
+  'code'  => sub {
+    my ($object, $value) = @_;
+    $value =~ s/[\r\n]+/ /g if defined $value;
+    return $value;
+  }
+);
+
 1;
