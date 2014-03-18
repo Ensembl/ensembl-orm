@@ -34,6 +34,7 @@ sub init {
 
   $self->add_trigger(
     'event' => 'deflate',
+    'name'  => 'remove_windows_newline',
     'code'  => sub {
       my ($object, $value) = @_;
       $value =~ s/\r\n?/\n/g if defined $value;
