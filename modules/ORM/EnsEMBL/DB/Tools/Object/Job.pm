@@ -21,17 +21,17 @@ package ORM::EnsEMBL::DB::Tools::Object::Job;
 ### Object representing 'job' table in the tools db
 ### Column description:
 ###  - status:
-###     awaiting_hive_response: job sent to hive db, and waiting for any further updates from hive
-###     awaiting_user_response: some problem happenned, either job could not be sent to hive, or has failed somewhere - user needs to have a look and resubmit it
+###     awaiting_dispatcher_response: job dispatched, and waiting for any further updates from dispatcher
+###     awaiting_user_response: some problem happenned, either job could not be sent to dispatcher, or has failed somewhere - user needs to have a look and resubmit it
 ###     done: job finished successfully, no further editing should be made to this job
-###  - hive_status:
-###     not_submitted: could not be sent to the hive
-###     queued: sent to hive, but not submitted to LFS by hive (either hive is too busy, or beekeeper is down)
-###     submitted: sent to hive and submitted to LFS (relax and wait)
-###     running: running on LFS
-###     done: done at LFS
-###     failed: failed at hive or LFS
-###     deleted: job got deleted from the hive db
+###  - dispatcher_status:
+###     not_submitted: could not be sent to the dispatcher
+###     queued: sent to dispatcher, but not submitted ahead for processing (eg. beekeeper yet to send the job to LFS)
+###     submitted: sent to dispatcher and submitted to for processing
+###     running: eg. running on LFS
+###     done: eg. done at LFS
+###     failed: failed at dispatcher
+###     deleted: dispatcher has no info about the job
 
 use strict;
 use warnings;
@@ -46,6 +46,6 @@ __PACKAGE__->meta->setup(
   auto_initialize => []
 );
 
-__PACKAGE__->meta->datastructure_columns(map {'name' => $_, 'trusted' => 1}, qw(job_data hive_job_data));
+__PACKAGE__->meta->datastructure_columns(map {'name' => $_, 'trusted' => 1}, qw(job_data dispatcher_job_data));
 
 1;
