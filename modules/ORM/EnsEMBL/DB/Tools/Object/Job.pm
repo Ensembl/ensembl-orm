@@ -46,6 +46,6 @@ __PACKAGE__->meta->setup(
   auto_initialize => []
 );
 
-__PACKAGE__->meta->datastructure_columns(map {'name' => $_, 'trusted' => 1}, qw(job_data dispatcher_job_data));
+__PACKAGE__->meta->datastructure_columns(map {'name' => $_, 'trusted' => 1}, qw(job_data dispatcher_data));
 
 1;
