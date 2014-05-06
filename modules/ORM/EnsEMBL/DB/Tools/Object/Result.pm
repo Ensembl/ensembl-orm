@@ -28,6 +28,6 @@ __PACKAGE__->meta->setup(
   auto_initialize => []
 );
 
-__PACKAGE__->meta->serialised_object_columns({'name' => 'result_data', 'gzip' => 1});
+__PACKAGE__->meta->datastructure_columns({'name' => 'result_data', 'trusted' => 1});
 
 1;
