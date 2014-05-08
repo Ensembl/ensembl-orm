@@ -48,4 +48,15 @@ __PACKAGE__->meta->setup(
 
 __PACKAGE__->meta->datastructure_columns(map {'name' => $_, 'trusted' => 1}, qw(job_data dispatcher_data));
 
+{
+  my $result_relationship = __PACKAGE__->meta->relationship('result');
+
+  $result_relationship->method_name('count', 'result_count');
+  $result_relationship->make_methods(
+    preserve_existing => 1,
+    types             => [ 'count' ]
+  );
+}
+
+
 1;
