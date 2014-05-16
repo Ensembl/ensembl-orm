@@ -35,10 +35,8 @@ sub load_package {
   ## @exception If class could not be loaded
   my $classname = shift;
   throw('Module name is missing') unless $classname;
-  unless ($INC{$classname}) {
-    eval "require $classname";
-    throw("Module '$classname' could not be loaded: $@") if $@;
-  }
+  eval "require $classname";
+  throw("Module '$classname' could not be loaded: $@") if $@;
   return $classname;
 }
 
