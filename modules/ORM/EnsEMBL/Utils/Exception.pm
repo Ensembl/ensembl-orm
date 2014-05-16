@@ -38,8 +38,8 @@ sub import {
       my ($try, $catch) = @_;
       eval { &$try };
       if ($@) {
-        local $_ = $@;
-        local $@ = undef;
+        local $_ = $class->new($@);
+        $@ = undef;
         &$catch;
       }
     };
@@ -56,7 +56,8 @@ sub import {
 
 sub new {
   my ($class, $message) = @_;
-  return bless {
+
+  return bless ref $message ? $message : {
     'type'    => 'ORMException',
     'message' => $message  || '',
     'stack'   => longmess
