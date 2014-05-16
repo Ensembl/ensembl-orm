@@ -24,8 +24,12 @@ package ORM::EnsEMBL::Rose::CustomColumnValue::DataStructure;
 use strict;
 use warnings;
 
+use Clone qw(clone);
+use Scalar::Util qw(blessed);
 use Data::Dumper;
+
 use ORM::EnsEMBL::Utils::Exception;
+use ORM::EnsEMBL::Utils::Helper qw(load_package);
 
 use parent qw(ORM::EnsEMBL::Rose::CustomColumnValue);
 
@@ -80,7 +84,7 @@ sub to_string {
   ## Stringifies the datastructure
   ## @return String
   my $self = shift;
-  return Data::Dumper->new([$self->raw])->Sortkeys(1)->Useqq(1)->Terse(1)->Indent(0)->Dump;
+  return Data::Dumper->new([ _recursive_unbless($self->raw) ])->Sortkeys(1)->Useqq(1)->Terse(1)->Indent(0)->Dump;
 }
 
 sub raw {
@@ -88,21 +92,23 @@ sub raw {
   ## Any change to the output hash will not change the related rose object
   ## @return ArrayRef/HashRef or String, depedning upon the actual object
   my $self = shift;
-  return $self->isa('SCALAR') ? "$$self" : $self->clone;
+
+  return "$$self" if $self->isa('SCALAR');
+  return { map clone($_), %$self } if UNIVERSAL::isa($self, 'HASH');
+  return [ map clone($_), @$self ] if UNIVERSAL::isa($self, 'ARRAY');
 }
 
-sub clone {
-  ## Clones the object to hash/array accordingly
-  ## Can be used as a method or a function
-  my $obj = shift;
+sub type {
+  ## Gets the type of this object
+  ## @return ARRAY/HASH or SCALAR, depedning upon the actual object
+  my $self = shift;
 
-  return $obj unless ref $obj;
-  return { map clone($_), %$obj } if UNIVERSAL::isa($obj, 'HASH');
-  return [ map clone($_), @$obj ] if UNIVERSAL::isa($obj, 'ARRAY');
+  UNIVERSAL::isa($self, $_) and return $_ for qw(SCALAR HASH ARRAY);
 }
 
 sub _parse {
   ## @private
+  ## @function
   ## Parses a datastructure
   ## If data is not from a trusted source, it tries to check its validity before evaling it
   my ($str, $trusted, $error_ref) = @_;
@@ -167,7 +173,65 @@ sub _parse {
   ## if eval threw an exception
   $$error_ref = $@ and return if $@;
 
+  try {
+    $data = _recursive_bless($data);
+  } catch {
+    $$error_ref = $_->message;
+  };
+
+  return if $$error_ref;
+
   return $data;
+}
+
+sub _recursive_unbless {
+  ## @private
+  ## @function
+  ## Returns a string representation of an object (after unblessing all blessed objects) as it should go in the db
+  my $obj = shift;
+
+  return $obj unless ref $obj;
+
+  my $encoded = blessed $obj ? [ '_ensorm_blessed_object', ref $obj ] : [];
+
+  if (UNIVERSAL::isa($obj, 'HASH')) {
+    push @$encoded, { map _recursive_unbless($_), %$obj };
+  } elsif (UNIVERSAL::isa($obj, 'ARRAY')) {
+    push @$encoded, [ map _recursive_unbless($_), @$obj ];
+  } else { # scalar ref
+    push @$encoded, $$obj;
+  }
+
+  $encoded = $encoded->[0] if @$encoded == 1;
+
+  return $encoded;
+}
+
+sub _recursive_bless {
+  ## @private
+  ## @function
+  ## Converts the encoded unblessed objects back to blessed objects
+  ## @exception - if load_package throws one
+  my $obj = shift;
+
+  return $obj unless ref $obj;
+
+  my ($class, $decoded);
+
+  if (ref $obj eq 'ARRAY' && @$obj && $obj->[0] eq '_ensorm_blessed_object') {
+    $class  = load_package($obj->[1]);
+    $obj    = $obj->[2];
+  }
+
+  if (ref $obj eq 'ARRAY') {
+    $decoded = [ map _recursive_bless($_), @$obj ];
+  } elsif (ref $obj eq 'HASH') {
+    $decoded = { map _recursive_bless($_), %$obj };
+  } else {
+    $decoded = $class ? \$obj : $obj;
+  }
+
+  return $class ? bless $decoded, $class : $decoded;
 }
 
 1;
