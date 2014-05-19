@@ -57,9 +57,9 @@ sub fetch_with_given_job {
   ## Gets the TicketType objects with linked Ticket object, and it's linked job and optionally result objects for a given job_id, belonging to given user 'or' the session
   ## @param Hashref with keys:
   ##  - site_type     : Site type string value as defined in SiteDefs ENSEMBL_SITE_TYPE (required)
-  ##  - type          : Type string (or arrayref of strings) for filtering the TicketType (required)
   ##  - ticket_name   : Ticket name (required)
   ##  - job_id        : Job id of the required job (required)
+  ##  - type          : Type string (or arrayref of strings) for filtering the TicketType (optional)
   ##  - result_id     : Result id if only one result is required, 'all' if all are required (don't provide this key if no result objects)
   ##  - user_id       : ID of the user to filter the tickets with (optional)
   ##  - session_id    : Session id to filter the tickets with (optional)
@@ -68,14 +68,14 @@ sub fetch_with_given_job {
 
   my $site_type         = delete $params->{'site_type'}   or throw("Please provide 'site_type' in the arguments.");
   my $ticket_name       = delete $params->{'ticket_name'} or throw("Please provide 'ticket_name' in the arguments.");
-  my $ticket_type_name  = delete $params->{'type'}        or throw("Please provide 'type' in the arguments.");
   my $job_id            = delete $params->{'job_id'}      or throw("Please provide 'job_id' in the arguments.");
+  my $ticket_type_name  = delete $params->{'type'};
 
   my $query             = [ map { exists $params->{"${_}_id"} ? [ 'ticket.owner_id' => $params->{"${_}_id"}, 'ticket.owner_type' => $_ ] : () } qw(user session) ];
      $query             = @$query > 1 ? [ 'or' => [ map {('and' => $_)} @$query ] ] : $query->[0];
 
   push @$query, ('ticket.job.result.result_id' => $params->{'result_id'} || 0) if exists $params->{'result_id'} && $params->{'result_id'} ne 'all';
-  push @$query, ('ticket_type_name' => $ticket_type_name, 'ticket.ticket_name' => $ticket_name, 'ticket.site_type' => $site_type, 'ticket.job.job_id' => $job_id);
+  push @$query, ('ticket.ticket_name' => $ticket_name, 'ticket.site_type' => $site_type, 'ticket.job.job_id' => $job_id, $ticket_type_name ? ('ticket_type_name' => $ticket_type_name) : ());
 
   return $self->get_objects(
     'with_objects'  => ['ticket', 'ticket.job', exists $params->{'result_id'} ? 'ticket.job.result' : ()],
