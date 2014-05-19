@@ -94,8 +94,8 @@ sub raw {
   my $self = shift;
 
   return "$$self" if $self->isa('SCALAR');
-  return { map clone($_), %$self } if UNIVERSAL::isa($self, 'HASH');
-  return [ map clone($_), @$self ] if UNIVERSAL::isa($self, 'ARRAY');
+  return { map clone($_), %$self } if $self->isa('HASH');
+  return [ map clone($_), @$self ] if $self->isa('ARRAY');
 }
 
 sub type {
@@ -103,7 +103,7 @@ sub type {
   ## @return ARRAY/HASH or SCALAR, depedning upon the actual object
   my $self = shift;
 
-  UNIVERSAL::isa($self, $_) and return $_ for qw(SCALAR HASH ARRAY);
+  $self->isa($_) and return $_ for qw(SCALAR HASH ARRAY);
 }
 
 sub _parse {
