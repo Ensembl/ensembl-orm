@@ -37,6 +37,7 @@ __PACKAGE__->meta->setup(
                                   cdna
                                   core
                                   funcgen
+                                  grch37_archive
                                   otherfeatures
                                   presite
                                   rnaseq
