@@ -53,6 +53,7 @@ __PACKAGE__->meta->setup(
                             pseudogene
                             snoncoding
                             lnoncoding
+                            LRG
                             undefined)]
     }
   ],
