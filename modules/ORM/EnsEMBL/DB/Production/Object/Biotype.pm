@@ -54,6 +54,7 @@ __PACKAGE__->meta->setup(
                             snoncoding
                             lnoncoding
                             LRG
+                            no_group
                             undefined)]
     }
   ],
