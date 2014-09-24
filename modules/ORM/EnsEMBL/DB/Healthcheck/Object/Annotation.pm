@@ -32,7 +32,7 @@ __PACKAGE__->meta->setup(
     session_id    => {type => 'integer'},
     action        => {
       'type'          => 'enum', 
-      'values'        => [qw(manual_ok manual_ok_all_releases manual_ok_this_assembly manual_ok_this_genebuild manual_ok_this_regulatory_build healthcheck_bug under_review fixed note)]
+      'values'        => [qw(manual_ok manual_ok_this_assembly manual_ok_this_genebuild manual_ok_this_regulatory_build healthcheck_bug under_review fixed note)]
     },
     comment       => {type => 'text'},
   ],
