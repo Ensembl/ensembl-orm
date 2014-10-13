@@ -125,7 +125,7 @@ sub _manual_ok_annotation_query {
   ## @private
   return  ('or', [
     'annotation.action'  => undef,
-    '!annotation.action' => [ qw(manual_ok manual_ok_all_releases manual_ok_this_assembly manual_ok_this_genebuild manual_ok_this_regulatory_build healthcheck_bug) ],
+    '!annotation.action' => [ qw(manual_ok manual_ok_this_assembly manual_ok_this_genebuild manual_ok_this_regulatory_build healthcheck_bug) ],
   ]);
 }
 
