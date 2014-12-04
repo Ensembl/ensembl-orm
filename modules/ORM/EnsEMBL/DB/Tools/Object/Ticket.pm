@@ -22,6 +22,7 @@ use strict;
 use warnings;
 
 use ORM::EnsEMBL::DB::Tools::Object::Job; # for foreign key initialisation
+use ORM::EnsEMBL::Utils::Exception;
 
 use parent qw(ORM::EnsEMBL::DB::Tools::Object);
 
@@ -38,6 +39,25 @@ __PACKAGE__->meta->setup(
     preserve_existing => 1,
     types             => [ 'count' ]
   );
+}
+
+sub calculate_life_left {
+  ## Calculates the life left for the ticket to expire according to give lifespan
+  ## @param Life span for ticket in days
+  ## @return Number of seconds left
+  my ($self, $life_span) = @_;
+
+  return 0 if $self->status =~ /^(Expired|Deleted)$/;
+
+  if (!$life_span || $life_span !~ /^\d+$/) {
+    throw('Lifespan argument is missing or invalid');
+  }
+
+  $life_span = 86400 * $life_span;
+
+  my $life_left = $life_span - time + $self->created_at->epoch;
+
+  return $life_left > 0 ? $life_left : 0;
 }
 
 1;
