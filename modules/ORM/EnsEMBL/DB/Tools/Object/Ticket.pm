@@ -43,17 +43,15 @@ __PACKAGE__->meta->setup(
 
 sub calculate_life_left {
   ## Calculates the life left for the ticket to expire according to give lifespan
-  ## @param Life span for ticket in days
+  ## @param Life span for ticket in seconds
   ## @return Number of seconds left
   my ($self, $life_span) = @_;
 
+  throw('Lifespan argument is missing or invalid') if !$life_span || $life_span !~ /^\d+$/;
+
+  return $life_span if $self->owner_type eq 'user';
+
   return 0 if $self->status =~ /^(Expired|Deleted)$/;
-
-  if (!$life_span || $life_span !~ /^\d+$/) {
-    throw('Lifespan argument is missing or invalid');
-  }
-
-  $life_span = 86400 * $life_span;
 
   my $life_left = $life_span - time + $self->created_at->epoch;
 
