@@ -58,5 +58,17 @@ __PACKAGE__->meta->datastructure_columns(map {'name' => $_, 'trusted' => 1}, qw(
   );
 }
 
+sub mark_deleted {
+  ## Marks the job object as deleted instead of actually deleting it from the db table - but deletes the related results and messages
+  ## @retuns Boolean as returned by 'save' method
+  my $self = shift;
+  $self->load('with' => ['result', 'job_message']) unless $self->has_loaded_related('result') && $self->has_loaded_related('job_message');
+
+  $_->delete for $self->result, $self->job_message;
+
+  $self->status('deleted');
+
+  return $self->save;
+}
 
 1;

@@ -59,4 +59,17 @@ sub calculate_life_left {
   return $life_left > 0 ? $life_left : 0;
 }
 
+sub mark_deleted {
+  ## Marks the ticket object and related job objects as deleted instead of actually deleting them from the db table - but deletes the related results and messages
+  ## @retuns Boolean as returned by 'save' method
+  my $self = shift;
+  $self->load('with' => ['job', 'job.result', 'job.job_message']);
+
+  $_->mark_deleted or return for $self->job;
+
+  $self->status('Deleted');
+
+  return $self->save;
+}
+
 1;
