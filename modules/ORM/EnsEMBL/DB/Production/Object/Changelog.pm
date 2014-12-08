@@ -46,7 +46,8 @@ __PACKAGE__->meta->setup(
     mitochondrion         => {type => 'enum', 'values' => [qw(Y N changed)], 'default' => 'N'},
     priority              => {type => 'integer', 'not_null' => 1, 'default' => 2},
     category              => {type => 'enum', 'values' => [qw(genebuild variation regulation alignment web schema retired other)], 'default' => 'other'},
-    is_current            => {type => 'integer', 'not_null' => 1, 'default' => 1}
+    is_current            => {type => 'integer', 'not_null' => 1, 'default' => 1},
+    site_type             => {type => 'enum', 'values' => [qw(ensembl grch37)], 'default' => 'ensembl'}
   ],
 
   trackable             => 1,
