@@ -34,6 +34,7 @@ __PACKAGE__->meta->setup(
 {
   my $job_relationship = __PACKAGE__->meta->relationship('job');
 
+  $job_relationship->query_args(['status' => {'ne' => 'deleted'}]); # exclude the 'deleted' jobs when fetching
   $job_relationship->method_name('count', 'job_count');
   $job_relationship->make_methods(
     preserve_existing => 1,

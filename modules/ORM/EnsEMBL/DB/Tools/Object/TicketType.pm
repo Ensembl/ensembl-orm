@@ -30,4 +30,7 @@ __PACKAGE__->meta->setup(
   auto_initialize => []
 );
 
+# exclude the 'Deleted' tickets when fetching
+__PACKAGE__->meta->relationship('ticket')->query_args(['status' => {'ne' => 'Deleted'}]);
+
 1;

@@ -28,7 +28,7 @@ use parent qw(ORM::EnsEMBL::Rose::Manager);
 sub object_class { 'ORM::EnsEMBL::DB::Tools::Object::TicketType' }
 
 sub fetch_with_current_tickets {
-  ## Gets the TicketType objects with linked Ticket objects belonging to given user 'or' the session
+  ## Gets the TicketType objects with linked Ticket objects (and Job objects) belonging to given user 'or' the session
   ## @param Hashref with keys:
   ##  - site_type   : Site type string value as defined in SiteDefs ENSEMBL_SITE_TYPE (required)
   ##  - type        : Type string (or arrayref of strings) for filtering the TicketType (optional)
