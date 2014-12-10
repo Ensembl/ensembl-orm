@@ -107,6 +107,24 @@ sub fetch_for_distinct_testcases {
   return shift->_fetch_for_distinct('testcase', @_);
 }
 
+sub fetch_hc_bug_reports {
+  ## Fetches all the reports that are annotated as healthcheck_bug for the required release
+  ## @param Hashred with keys:
+  ##  - last_session_id   Session id of the last session of the requested release
+  ##  - first_session_id  Session id of the first session of the requested release
+  ## @return ArrayRef of ORM::EnsEMBL::DB::Healthcheck::Object::Report objects if found any
+  my ($self, $params) = @_;
+
+  return $self->get_objects(
+    'with_objects'  => ['annotation'],
+    'query'         => [
+      'annotation.action' => 'healthcheck_bug',
+      'last_session_id'   => {'ge' => $params->{'first_session_id'}},
+      'last_session_id'   => {'le' => $params->{'last_session_id'}}
+    ]
+  );
+}
+
 sub _fetch_for_distinct {
   ## Private method to fetch reports keeping one column distinct
   my ($self, $group_by, $params) = @_;
