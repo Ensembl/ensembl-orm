@@ -116,11 +116,12 @@ sub fetch_hc_bug_reports {
   my ($self, $params) = @_;
 
   return $self->get_objects(
-    'with_objects'  => ['annotation'],
-    'query'         => [
-      'annotation.action' => 'healthcheck_bug',
-      'last_session_id'   => {'ge' => $params->{'first_session_id'}},
-      'last_session_id'   => {'le' => $params->{'last_session_id'}}
+    'with_objects'          => ['annotation'],
+    'with_external_objects' => ['annotation.created_by_user', 'annotation.modified_by_user'],
+    'query'                 => [
+      'annotation.action'     => 'healthcheck_bug',
+      'last_session_id'       => {'ge' => $params->{'first_session_id'}},
+      'last_session_id'       => {'le' => $params->{'last_session_id'}}
     ]
   );
 }
