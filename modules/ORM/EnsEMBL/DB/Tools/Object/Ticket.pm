@@ -63,7 +63,7 @@ sub mark_deleted {
   ## Marks the ticket object and related job objects as deleted instead of actually deleting them from the db table - but deletes the related results and messages
   ## @return Boolean as returned by 'save' method
   my $self = shift;
-  $self->load('with' => ['job', 'job.result', 'job.job_message']);
+  $self->load('with' => ['job']);
 
   $_->mark_deleted or return for $self->job;
 

@@ -38,6 +38,7 @@ use warnings;
 
 use ORM::EnsEMBL::DB::Tools::Object::JobMessage;  # for foreign key initialisation
 use ORM::EnsEMBL::DB::Tools::Object::Result;      # for foreign key initialisation
+use ORM::EnsEMBL::Rose::Manager;
 
 use parent qw(ORM::EnsEMBL::DB::Tools::Object);
 
@@ -62,13 +63,26 @@ sub mark_deleted {
   ## Marks the job object as deleted instead of actually deleting it from the db table - but deletes the related results and messages
   ## @return Boolean as returned by 'save' method
   my $self = shift;
-  $self->load('with' => ['result', 'job_message']) unless $self->has_loaded_related('result') && $self->has_loaded_related('job_message');
 
-  $_->delete for $self->result, $self->job_message;
+  $self->deleted_related($_) for qw(result job_message);
 
   $self->status('deleted');
 
   return $self->save;
+}
+
+sub deleted_related {
+  ## Deletes all related object of given relationship at once
+  ## @param Relationship name
+  ## @return Number of rows deleted, or undef if there is an error.
+  my ($self, $type) = @_;
+
+  ORM::EnsEMBL::Rose::Manager->delete_objects(
+    'object_class'  => $self->meta->relationship($type)->class,
+    'where'         => [ 'job_id' => $self->job_id ]
+  );
+
+  $self->forget_related($type);
 }
 
 1;
