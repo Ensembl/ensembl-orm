@@ -28,23 +28,27 @@ use parent qw(ORM::EnsEMBL::Rose::Manager);
 sub object_class { 'ORM::EnsEMBL::DB::Tools::Object::TicketType' }
 
 sub fetch_with_current_tickets {
-  ## Gets the TicketType objects with linked Ticket objects (and Job objects) belonging to given user 'or' the session
+  ## Gets the TicketType objects with linked Ticket objects (and Job objects) belonging to given user + session
   ## @param Hashref with keys:
   ##  - site_type   : Site type string value as defined in SiteDefs ENSEMBL_SITE_TYPE (required)
   ##  - type        : Type string (or arrayref of strings) for filtering the TicketType (optional)
-  ##  - ticket_name : String (or arrayref of strings) for filtering the tickets (optional)
-  ##  - user_id     : ID of the user to filter the tickets with (optional)
-  ##  - session_id  : Session id to filter the tickets with (optional)
+  ##  - user_id     : ID of the user to filter the tickets (required if session_id is missing)
+  ##  - session_id  : Session id to filter the tickets (required if user_id is missing)
   ## @return ArrayRef of TicketType objects
   my ($self, $params) = @_;
 
+  # required parameter
   my $site_type = delete $params->{'site_type'} or throw("Please provide 'site_type' in the arguments.");
-  my $query     = [ map { exists $params->{"${_}_id"} ? [ 'ticket.owner_id' => $params->{"${_}_id"}, 'ticket.owner_type' => $_ ] : () } qw(user session) ];
-     $query     = @$query > 1 ? [ 'or' => [ map {('and' => $_)} @$query ] ] : $query->[0];
 
-  push @$query, 'ticket_type_name'    => $params->{'type'}        if exists $params->{'type'};
-  push @$query, 'ticket.ticket_name'  => $params->{'ticket_name'} if exists $params->{'ticket_name'};
-  push @$query, 'ticket.site_type'    => $site_type;
+  # include results for both user and session
+  my $query = [ map { $params->{"${_}_id"} ? [ 'ticket.owner_id' => $params->{"${_}_id"}, 'ticket.owner_type' => $_ ] : () } qw(user session) ];
+     $query = @$query > 1 ? [ 'or' => [ map {('and' => $_)} @$query ] ] : $query->[0];
+
+  # at least one out of session and user is required
+  throw("Please provide 'session_id' or 'user_id' in the arguments.") unless $query;
+
+  push @$query, 'ticket_type_name'  => $params->{'type'} if $params->{'type'};
+  push @$query, 'ticket.site_type'  => $site_type;
 
   return $self->get_objects(
     'with_objects'  => ['ticket', 'ticket.job'],
@@ -53,32 +57,36 @@ sub fetch_with_current_tickets {
   );
 }
 
-sub fetch_with_given_job {
-  ## Gets the TicketType objects with linked Ticket object, and it's linked job and optionally result objects for a given job_id, belonging to given user 'or' the session
+sub fetch_with_requested_ticket {
+  ## Gets the TicketType objects with linked Ticket object, and it's linked jobs and optionally result objects for the requested ticket that belongs to either given user or session
   ## @param Hashref with keys:
   ##  - site_type     : Site type string value as defined in SiteDefs ENSEMBL_SITE_TYPE (required)
   ##  - ticket_name   : Ticket name (required)
-  ##  - job_id        : Job id of the required job (required)
+  ##  - job_id        : Job id of the required job (if provided only this job will be returned, otherwise all jobs will be returned)
   ##  - type          : Type string (or arrayref of strings) for filtering the TicketType (optional)
-  ##  - result_id     : Result id if only one result is required, 'all' if all are required (don't provide this key if no result objects)
-  ##  - user_id       : ID of the user to filter the tickets with (optional)
-  ##  - session_id    : Session id to filter the tickets with (optional)
+  ##  - result_id     : Result id if only one result is required, 'all' if all are required (if key not provided, no result objects are returned)
+  ##  - user_id       : ID of the user to filter the ticket (required if session_id is missing)
+  ##  - session_id    : Session id to filter the ticket (required if user_id is missing)
   ## @return TicketType object, only if job object is found (may or may not have related results objects)
   my ($self, $params) = @_;
 
+  # required params
   my $site_type         = delete $params->{'site_type'}   or throw("Please provide 'site_type' in the arguments.");
   my $ticket_name       = delete $params->{'ticket_name'} or throw("Please provide 'ticket_name' in the arguments.");
-  my $job_id            = delete $params->{'job_id'}      or throw("Please provide 'job_id' in the arguments.");
   my $ticket_type_name  = delete $params->{'type'};
 
-  my $query             = [ map { exists $params->{"${_}_id"} ? [ 'ticket.owner_id' => $params->{"${_}_id"}, 'ticket.owner_type' => $_ ] : () } qw(user session) ];
-     $query             = @$query > 1 ? [ 'or' => [ map {('and' => $_)} @$query ] ] : $query->[0];
+  # ticket could either belong to user or session
+  my $query = [ map { $params->{"${_}_id"} ? [ 'ticket.owner_id' => $params->{"${_}_id"}, 'ticket.owner_type' => $_ ] : () } qw(user session) ];
+     $query = @$query > 1 ? [ 'or' => [ map {('and' => $_)} @$query ] ] : $query->[0];
 
-  push @$query, ('ticket.job.result.result_id' => $params->{'result_id'} || 0) if exists $params->{'result_id'} && $params->{'result_id'} ne 'all';
-  push @$query, ('ticket.ticket_name' => $ticket_name, 'ticket.site_type' => $site_type, 'ticket.job.job_id' => $job_id, $ticket_type_name ? ('ticket_type_name' => $ticket_type_name) : ());
+  # at least one out of session and user is required
+  throw("Please provide 'session_id' or 'user_id' in the arguments.") unless $query;
+
+  push @$query, ('ticket.job.result.result_id' => $params->{'result_id'} || 0) if $params->{'result_id'} && $params->{'result_id'} ne 'all';
+  push @$query, ('ticket.ticket_name' => $ticket_name, 'ticket.site_type' => $site_type, $params->{'job_id'} ? ('ticket.job.job_id' => $params->{'job_id'}) : (), $ticket_type_name ? ('ticket_type_name' => $ticket_type_name) : ());
 
   return $self->get_objects(
-    'with_objects'  => ['ticket', 'ticket.job', exists $params->{'result_id'} ? 'ticket.job.result' : ()],
+    'with_objects'  => ['ticket', 'ticket.job', $params->{'result_id'} ? 'ticket.job.result' : ()],
     'multi_many_ok' => 1,
     'query'         => $query
   )->[0];
