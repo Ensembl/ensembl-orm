@@ -67,6 +67,7 @@ sub fetch_with_requested_ticket {
   ##  - result_id     : Result id if only one result is required, 'all' if all are required (if key not provided, no result objects are returned)
   ##  - user_id       : ID of the user to filter the ticket (required if session_id is missing)
   ##  - session_id    : Session id to filter the ticket (required if user_id is missing)
+  ##  - public_ok     : Flag if on, will return the ticket even if it doesn't belong to the given user or session but has visibility 'public'
   ## @return TicketType object, only if job object is found (may or may not have related results objects)
   my ($self, $params) = @_;
 
@@ -76,7 +77,7 @@ sub fetch_with_requested_ticket {
   my $ticket_type_name  = delete $params->{'type'};
 
   # ticket could either belong to user or session
-  my $query = [ map { $params->{"${_}_id"} ? [ 'ticket.owner_id' => $params->{"${_}_id"}, 'ticket.owner_type' => $_ ] : () } qw(user session) ];
+  my $query = [ $params->{'public_ok'} ? [ 'ticket.visibility' => 'public' ] : (), map { $params->{"${_}_id"} ? [ 'ticket.owner_id' => $params->{"${_}_id"}, 'ticket.owner_type' => $_ ] : () } qw(user session) ];
      $query = @$query > 1 ? [ 'or' => [ map {('and' => $_)} @$query ] ] : $query->[0];
 
   # at least one out of session and user is required
