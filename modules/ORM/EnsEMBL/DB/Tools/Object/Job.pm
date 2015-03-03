@@ -42,21 +42,15 @@ use ORM::EnsEMBL::Rose::Manager;
 
 use parent qw(ORM::EnsEMBL::DB::Tools::Object);
 
-__PACKAGE__->meta->setup(
-  table           => 'job',
-  auto_initialize => []
-);
-
-__PACKAGE__->meta->datastructure_columns(map {'name' => $_, 'trusted' => 1}, qw(job_data dispatcher_data));
-
 {
-  my $result_relationship = __PACKAGE__->meta->relationship('result');
-
-  $result_relationship->method_name('count', 'result_count');
-  $result_relationship->make_methods(
-    preserve_existing => 1,
-    types             => [ 'count' ]
-  );
+  my $meta = __PACKAGE__->meta;
+  $meta->table('job');
+  $meta->auto_init_columns;
+  $meta->column('job_desc')->overflow('truncate');
+  $meta->auto_initialize;
+  $meta->datastructure_columns(map {'name' => $_, 'trusted' => 1}, qw(job_data dispatcher_data));
+  $meta->relationship('result')->method_name('count', 'result_count');
+  $meta->relationship('result')->make_methods(preserve_existing => 1, types => [ 'count' ]);
 }
 
 sub mark_deleted {
