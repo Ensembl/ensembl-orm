@@ -23,11 +23,13 @@ use warnings;
 
 use parent qw(ORM::EnsEMBL::DB::Tools::Object);
 
-__PACKAGE__->meta->setup(
-  table           => 'job_message',
-  auto_initialize => []
-);
-
-__PACKAGE__->meta->datastructure_columns(map {'name' => $_, 'trusted' => 1}, qw(exception data));
+{
+  my $meta = __PACKAGE__->meta;
+  $meta->table('job_message');
+  $meta->auto_init_columns;
+  $meta->column('display_message')->overflow('truncate');
+  $meta->auto_initialize;
+  $meta->datastructure_columns(map {'name' => $_, 'trusted' => 1}, qw(exception data));
+}
 
 1;
