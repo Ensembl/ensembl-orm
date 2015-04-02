@@ -16,7 +16,7 @@ limitations under the License.
 
 =cut
 
-package ORM::EnsEMBL::DB::Production::Object::AttribType;
+package ORM::EnsEMBL::DB::Production::Object::AttribSet;
 
 use strict;
 use warnings;
@@ -24,46 +24,29 @@ use warnings;
 use parent qw(ORM::EnsEMBL::DB::Production::Object);
 
 __PACKAGE__->meta->setup(
-  table         => 'master_attrib_type',
+  table         => 'master_attrib_set',
 
   columns       => [
-    attrib_type_id  => {type => 'serial', primary_key => 1, not_null => 1},
-    code            => {type => 'varchar', 'length' => 20,  not_null => 1},		
-    name            => {type => 'varchar', 'length' => 255, not_null => 1},			
-    description     => {type => 'text'},
-    is_current      => {type => 'int', 'default' => 1,      not_null => 1}
+    attrib_set_id   => {type => 'serial', primary_key => 1, not_null => 1},
+    attrib_id       => {type => 'int', 'default' => 0, not_null => 1},
+    is_current      => {type => 'int', 'default' => 1, not_null => 1}
   ],
 
   trackable             => 1,
 
-  unique_key            => ['code'],
+  unique_key            => [qw(attrib_set_id attrib_id)],
 
   title_column          => 'name',
 
   inactive_flag_column  => 'is_current',
 
   relationships => [
-    biotype         => {
-      'type'        => 'one to one',
-      'class'       => 'ORM::EnsEMBL::DB::Production::Object::Biotype',
-      'column_map'  => {'attrib_type_id' => 'attrib_type_id'},
-    },
-    attrib      => {
+    attrib => {
       'type'        => 'one to one',
       'class'       => 'ORM::EnsEMBL::DB::Production::Object::Attrib',
-      'column_map'  => {'attrib_type_id' => 'attrib_type_id'},
+      'column_map'  => {'attrib_id' => 'attrib_id'},
     }
   ]
-);
-
-__PACKAGE__->meta->column('description')->add_trigger(
-  'event' => 'deflate',
-  'name'  => 'remove_newline',
-  'code'  => sub {
-    my ($object, $value) = @_;
-    $value =~ s/[\r\n]+/ /g if defined $value;
-    return $value;
-  }
 );
 
 1;
