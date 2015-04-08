@@ -36,7 +36,7 @@ __PACKAGE__->meta->setup(
 
   unique_key            => [qw(attrib_set_id attrib_id)],
 
-  title_column          => 'name',
+  title_column          => 'attrib_set_id',
 
   inactive_flag_column  => 'is_current',
 
