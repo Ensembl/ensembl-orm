@@ -55,17 +55,20 @@ sub save {
   ## @exception If thrown by Rose API while saving the object
   my ($self, %params) = @_;
 
-  if ($self->meta->trackable && (my $user = delete $params{'user'})) {
+  if ($self->meta->trackable) {
     my $key = $self->get_primary_key_value ? 'modified' : 'created';
     my $by  = "${key}_by";
     my $at  = "${key}_at";
 
-    $self->$by($user->get_primary_key_value);
     $self->$at(parse_date('now'));
+
+    if (my $user = delete $params{'user'}) {
+      $self->$by($user->get_primary_key_value);
+    }
   }
 
   $Rose::DB::Object::Debug = $self->DEBUG_SQL;
-  
+
   my $return;
   eval {
     $return = $self->SUPER::save(%params);
