@@ -71,35 +71,4 @@ sub dbi_connect {
   return $connection;
 }
 
-sub register_from_speciesdefs {
-  ## Registers data sources from species defs
-  ## @param EnsEMBL::Web::SpeciesDefs object
-  my ($self, $sd) = @_;
-
-  my $return = {};
-
-  $sd->set_userdb_details_for_rose if $sd->can('set_userdb_details_for_rose');
-
-  while (my ($key, $value) = each %{$sd->ENSEMBL_ORM_DATABASES}) {
-
-    my $params = $value;
-    if (!ref $params) {
-      $params = $sd->multidb->{$value} or warn "Database connection properties for '$value' could not be found in SiteDefs" and next;
-      $params = {
-        'database'  => $params->{'NAME'},
-        'host'      => $params->{'HOST'} || $sd->DATABASE_HOST,
-        'port'      => $params->{'PORT'} || $sd->DATABASE_HOST_PORT,
-        'username'  => $params->{'USER'} || $sd->DATABASE_WRITE_USER,
-        'password'  => $params->{'PASS'} || $sd->DATABASE_WRITE_PASS,
-      };
-    }
-
-    $params->{'type'} = $key;
-
-    $return->{$key} = $self->register_database($params);
-  }
-  
-  return $return;
-}
-
 1;
