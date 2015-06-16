@@ -84,7 +84,7 @@ sub to_string {
   ## Stringifies the datastructure
   ## @return String
   my $self = shift;
-  return Data::Dumper->new([ _recursive_unbless($self->raw) ])->Sortkeys(1)->Useqq(1)->Terse(1)->Indent(0)->Dump;
+  return Data::Dumper->new([ _recursive_unbless($self->raw) ])->Sortkeys(1)->Useqq(1)->Terse(1)->Indent(0)->Maxdepth(0)->Dump;
 }
 
 sub raw {
