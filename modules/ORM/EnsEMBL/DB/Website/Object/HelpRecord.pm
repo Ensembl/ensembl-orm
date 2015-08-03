@@ -26,6 +26,8 @@ use parent qw(ORM::EnsEMBL::DB::Website::Object);
 __PACKAGE__->meta->setup(
   table           => 'help_record',
 
+  trackable       => 1,
+
   columns         => [
     help_record_id  => {type => 'serial',                    not_null => 1, primary_key => 1},
     type            => {type => 'varchar',  'length' => 255, not_null => 1},
