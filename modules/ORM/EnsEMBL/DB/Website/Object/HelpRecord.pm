@@ -72,7 +72,7 @@ sub include_in_lookup {
 
 sub get_title {
   ## @overrodes
-  return $_[0]->column_value({qw(view content movie title faq question glossary word)}->{$_[0]->type});
+  return $_[0]->column_value({qw(view content movie title faq question glossary word lookup word)}->{$_[0]->type});
 }
 
 1;
