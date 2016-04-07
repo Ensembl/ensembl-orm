@@ -36,6 +36,8 @@ sub _meta_setup {
   $meta->column('data')->overflow('truncate');
   $meta->auto_initialize;
   $meta->datastructure_columns({'name' => 'data', 'trusted' => 1});
+  $meta->column('record_type')->values(['session']);
+  $meta->column('record_type')->constraint_values(['session']);
   $meta->trackable(1);
 }
 
