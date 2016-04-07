@@ -37,6 +37,9 @@ sub _meta_setup {
 
   # Setup meta object using the setup method from session record table (MI on objects does not work with Rose objects)
   load_package('ORM::EnsEMBL::DB::Session::Object::Record')->can('_meta_setup')->($class);
+
+  $meta->column('record_type')->values(['user', 'group']);
+  $meta->column('record_type')->constraint_values(['user', 'group']);
 }
 
 sub get_invitation_code {
