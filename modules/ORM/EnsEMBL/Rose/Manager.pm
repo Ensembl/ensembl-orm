@@ -63,6 +63,10 @@ sub get_objects {
   my $with_e_objects  = delete $params{'with_external_objects'};
   $params{'debug'}    = 1 if $object_class->DEBUG_SQL;
 
+  # 'where' is an alias for 'query'
+  $params{'query'} = delete $params{'where'} if !$params{'query'} && $params{'where'};
+
+  $self->_add_column_constraint_query(\%params);
   $self->_add_active_only_query(\%params) if exists $params{'active_only'} ? delete $params{'active_only'} : 1;
 
   my $objects = $self->SUPER::get_objects(%params);
@@ -268,6 +272,26 @@ sub _add_active_only_query {
   if (my $inactive_flag_column = $meta_class->inactive_flag_column) {
     $params->{'query'} ||= [];
     push @{$params->{'query'}}, "!$inactive_flag_column", $meta_class->inactive_flag_value;
+  }
+}
+
+sub _add_column_constraint_query {
+  ## @private
+  ## Adds query params to constraint the results to include only those rows that have column value as set by constraint_values for that column
+  my ($self, $params) = @_;
+  my $meta_class = load_package($params->{'object_class'} || $self->object_class_name)->meta;
+
+  my $extra_args = {};
+
+  for (grep $_->type eq 'enum', $meta_class->columns) {
+    my $constraint_values = $_->constraint_values;
+
+    $extra_args->{$_->alias || $_->name} = $constraint_values if @$constraint_values;
+  }
+
+  if (keys %$extra_args) {
+
+    push @{$params->{'query'}}, keys %$extra_args > 1 ? ( 'AND' => [ %$extra_args ] ) : %$extra_args;
   }
 }
 

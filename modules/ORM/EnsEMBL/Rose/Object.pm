@@ -41,6 +41,7 @@ use constant {
 __PACKAGE__->meta->error_mode('return');          ## When debugging, change from 'return' to 'carp'/'cluck'/'confess'/'croak' to produce the desired Carp behaviour
 __PACKAGE__->meta->column_type_class(@$_) for (   ## Add custom column types
   ['text'               => 'ORM::EnsEMBL::Rose::TextColumn'                     ],
+  ['enum'               => 'ORM::EnsEMBL::Rose::Column::EnumColumn'             ],
   ['datastructure'      => 'ORM::EnsEMBL::Rose::CustomColumn::DataStructure'    ],
   ['datamap'            => 'ORM::EnsEMBL::Rose::CustomColumn::DataMap'          ],
   ['serialised_object'  => 'ORM::EnsEMBL::Rose::CustomColumn::SerialisedObject' ]
