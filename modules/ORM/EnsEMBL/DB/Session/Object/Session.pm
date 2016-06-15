@@ -28,7 +28,8 @@ use parent qw(ORM::EnsEMBL::DB::Session::Object);
 {
   my $meta = __PACKAGE__->meta;
   $meta->table('session');
-  $meta->auto_initialize;
+  $meta->auto_init_columns;
+  $meta->initialize;
 }
 
 1;
