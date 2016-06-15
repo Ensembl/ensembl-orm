@@ -26,6 +26,8 @@ use ORM::EnsEMBL::Utils::Exception;
 use parent qw(ORM::EnsEMBL::Rose::Manager);
 
 sub create_session_id {
+  ## Creates a new session id by incrementing the last_session_no column in session table
+  ## @return New session id (numeric)
   my $self        = shift;
   my $db          = $self->object_class->init_db;
   my $dbh         = $db->dbh or throw($db->error);
