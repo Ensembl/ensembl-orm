@@ -26,15 +26,25 @@ use ORM::EnsEMBL::Utils::Exception;
 use parent qw(ORM::EnsEMBL::Rose::Manager);
 
 sub create_session_id {
-  my $self = shift;
+  my $self        = shift;
+  my $db          = $self->object_class->init_db;
+  my $dbh         = $db->dbh or throw($db->error);
+  my $session_id  = 1;
 
-  my $row     = $self->get_objects({'limit' => 1, 'lock' => {'type' => 'for update', 'tables' => ['session']}, debug => 1})->[0] || $self->create_empty_object({'last_session_id' => 0});
-  my $new_id  = $row->last_session_id + 1;
+  $dbh->do('LOCK TABLES session WRITE') or throw($db->error);
 
-  $row->last_session_id($new_id);
-  $row->save;
+  my $row = $self->get_objects('table_aliases' => 0)->[0]; # update_objects doesn't use alias at all, so disable alias here for table lock to work in both cases
 
-  return $new_id;
+  if ($row) {
+    $session_id = $row->last_session_no + 1;
+    $self->update_objects('set' => {'last_session_no' => $session_id}, 'all' => 1);
+  } else {
+    $self->create_empty_object({'last_session_no' => 1})->save;
+  }
+
+  $dbh->do('UNLOCK TABLES');
+
+  return $session_id;
 }
 
 1;
