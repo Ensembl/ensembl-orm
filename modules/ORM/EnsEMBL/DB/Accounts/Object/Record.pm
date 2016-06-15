@@ -40,6 +40,7 @@ sub _meta_setup {
 
   $meta->column('record_type')->values(['user', 'group']);
   $meta->column('record_type')->constraint_values(['user', 'group']);
+  $meta->trackable(1);
 }
 
 sub get_invitation_code {
