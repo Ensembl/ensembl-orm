@@ -62,13 +62,13 @@ sub dbi_connect {
   ## @override
   ## Overrides the default dbi_connect method to throw an exception if connection couldn't be established
   my ($self, @args) = @_;
-  my $connection;
+  my ($connection, $error);
   try {
     $connection = $self->SUPER::dbi_connect(@args);
   } catch {
-    warn $_;
+    $error = $_->message;
   };
-  throw('Database connection could not be created.') unless $connection;
+  throw(sprintf 'Database connection could not be created: %s', $error || 'Unknown error') unless $connection;
   return $connection;
 }
 
