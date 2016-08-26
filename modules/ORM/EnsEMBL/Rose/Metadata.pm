@@ -63,7 +63,7 @@ sub trackable {
     my %relationships = map { $columns{$_}{'relationship'} ? (delete $columns{$_}{'relationship'}, $_) : () } keys %columns;
 
     for (keys %columns) {
-      $self->column($_, $columns{$_});
+      $self->column($_, $columns{$_}) unless $self->column($_);
     }
 
     if ($self->class->init_db->trackable) {
