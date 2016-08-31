@@ -26,12 +26,15 @@ use warnings;
 
 use parent qw(ORM::EnsEMBL::DB::Session::Object);
 
+use constant TABLE_NAME => 'all_record';
+
 __PACKAGE__->_meta_setup;
 
 sub _meta_setup {
   ## Initialises database schema
-  my $meta = shift->meta;
-  $meta->table('record');
+  my $class = shift;
+  my $meta  = $class->meta;
+  $meta->table($class->TABLE_NAME);
   $meta->auto_init_columns;
   $meta->column('data')->overflow('truncate');
   $meta->auto_initialize;
