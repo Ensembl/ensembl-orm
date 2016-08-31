@@ -28,6 +28,17 @@ use ORM::EnsEMBL::Utils::Helper qw(random_string load_package);
 
 use parent qw(ORM::EnsEMBL::DB::Accounts::Object);
 
+my $VIRTUAL_COLUMNS = {
+  'history'           => [qw(object value url name species param)],
+  'bookmark'          => [qw(name description url object click)],
+  'specieslist'       => [qw(favourites list)],
+  'urls'              => [qw(format cloned_from)],
+  'invitation'        => [qw(invitation_code email)],
+  'upload'            => [qw(file filename filesize name description md5 format species assembly assemblies share_id
+                              analyses browser_switches renderers style display nearest site timestamp cloned_from no_attach)],
+  'favourite_tracks'  => [qw(tracks)]
+};
+
 __PACKAGE__->_meta_setup;
 
 sub _meta_setup {
@@ -40,6 +51,7 @@ sub _meta_setup {
 
   $meta->column('record_type')->values(['user', 'group']);
   $meta->column('record_type')->constraint_values(['user', 'group']);
+  $meta->virtual_columns(map {$_ => {'column' => 'data'}} keys %{{ map { map {$_ => 1} @$_ } values %$VIRTUAL_COLUMNS }}),
   $meta->trackable(1);
 }
 
