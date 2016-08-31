@@ -59,7 +59,7 @@ __PACKAGE__->meta->setup(
     records               => __PACKAGE__->record_relationship_params('user_id')
   ],
 
-  virtual_relationships => __PACKAGE__->record_relationship_types
+#  virtual_relationships => __PACKAGE__->record_relationship_types
 );
 
 sub reset_salt {
