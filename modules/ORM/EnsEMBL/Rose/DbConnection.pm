@@ -1,6 +1,7 @@
 =head1 LICENSE
 
-Copyright [1999-2016] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+Copyright [2016] EMBL-European Bioinformatics Institute
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -61,13 +62,13 @@ sub dbi_connect {
   ## @override
   ## Overrides the default dbi_connect method to throw an exception if connection couldn't be established
   my ($self, @args) = @_;
-  my $connection;
+  my ($connection, $error);
   try {
     $connection = $self->SUPER::dbi_connect(@args);
   } catch {
-    warn $_;
+    $error = $_->message;
   };
-  throw('Database connection could not be created.') unless $connection;
+  throw(sprintf 'Database connection could not be created: %s', $error || 'Unknown error') unless $connection;
   return $connection;
 }
 
