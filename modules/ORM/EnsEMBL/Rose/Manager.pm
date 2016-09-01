@@ -188,6 +188,7 @@ sub count {
   my ($self, $params) = @_;
 
   my $active_only     = exists $params->{'active_only'} ? delete $params->{'active_only'} : 1;
+  $self->_add_column_constraint_query($params);
   $self->_add_active_only_query($params) if $active_only;
 
   return $self->get_objects_count(%$params);
