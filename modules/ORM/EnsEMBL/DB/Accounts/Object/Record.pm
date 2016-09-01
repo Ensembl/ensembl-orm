@@ -29,6 +29,8 @@ use ORM::EnsEMBL::Utils::Helper qw(random_string load_package);
 
 use parent qw(ORM::EnsEMBL::DB::Accounts::Object);
 
+use constant TABLE_NAME => 'all_record';
+
 my $VIRTUAL_COLUMNS = {
   'history'           => [qw(object value url name species param)],
   'bookmark'          => [qw(name description url object click)],
