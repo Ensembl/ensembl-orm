@@ -29,7 +29,7 @@ use parent qw(ORM::EnsEMBL::DB::Accounts::Object);
 
 use constant RECORD_TYPE => '';
 
-sub create_record {
+sub create_record {die('not in use');
   ## Creates a record of a given type (does not save it to the db)
   ## @param Type of the record
   ## @param Hashref of name value pair for columns of the new object (optional)
@@ -43,7 +43,7 @@ sub create_record {
   }]))[0];
 }
 
-sub record_relationship_types {
+sub record_relationship_types {die('not in use');
   ## @protected
   return [
     annotations           => { 'relationship' => 'records', 'condition' => {'type' => 'annotation'}       },

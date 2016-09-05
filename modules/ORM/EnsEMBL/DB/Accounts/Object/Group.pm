@@ -51,7 +51,7 @@ __PACKAGE__->meta->setup(
     records               => __PACKAGE__->record_relationship_params('webgroup_id')
   ],
 
-  virtual_relationships => __PACKAGE__->record_relationship_types
+  #virtual_relationships => __PACKAGE__->record_relationship_types
 );
 
 sub id {
