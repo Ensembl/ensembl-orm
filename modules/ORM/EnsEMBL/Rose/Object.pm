@@ -30,7 +30,6 @@ use ORM::EnsEMBL::Rose::Metadata;
 use ORM::EnsEMBL::Utils::Exception;
 
 use Rose::DB::Object::Helpers qw(as_tree forget_related has_loaded_related), {qw(clone_and_reset default_clone_and_reset)};  ## Some extra methods that can be called on any child class object
-use Rose::DateTime::Util qw(parse_date);
 
 use parent qw(Rose::DB::Object);
 
@@ -58,15 +57,17 @@ sub save {
   my ($self, %params) = @_;
 
   if ($self->meta->trackable) {
-    my $key = $self->get_primary_key_value ? 'modified' : 'created';
-    my $by  = "${key}_by";
-    my $at  = "${key}_at";
 
-    $self->$at(parse_date('now'));
+    my $user = delete $params{'user'};
+       $user = $user->get_primary_key_value if $user;
 
-    if (my $user = delete $params{'user'}) {
-      $self->$by($user->get_primary_key_value);
+    if (!$self->get_primary_key_value) {
+      $self->created_by($user) if $user;
+      $self->created_at('now');
     }
+
+    $self->modified_by($user) if $user;
+    $self->modified_at('now');
   }
 
   $Rose::DB::Object::Debug = $self->DEBUG_SQL;
