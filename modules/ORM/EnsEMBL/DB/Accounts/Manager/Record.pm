@@ -27,6 +27,14 @@ use parent qw(ORM::EnsEMBL::Rose::Manager);
 sub get_user_records  { return shift->_get_records('user', @_);       } ## Wrapper around get_objects method to filter records by record type user  ## @params As accepted by get_objects
 sub get_group_records { return shift->_get_records('group', @_);      } ## Wrapper around get_objects method to filter records by record type group ## @params As accepted by get_objects
 
+sub get_saved_config {
+  my ($self, $code) = @_;
+
+  my $records = $self->get_objects('query' => ['code' => $code, 'type' => 'saved_config'], 'limit' => 1);
+
+  return $records && $records->[0] && $records->[0]->data->raw;
+}
+
 sub _get_records {
   ## @private
   my ($self, $type, %params) = @_;
