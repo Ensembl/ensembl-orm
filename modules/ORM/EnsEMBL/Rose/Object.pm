@@ -73,10 +73,21 @@ sub save {
   $Rose::DB::Object::Debug = $self->DEBUG_SQL;
 
   my $return;
-  eval {
-    $return = $self->SUPER::save(%params);
-  };
-  throw($@) if $@;
+
+  # In case there's a deadlock, make three attempts to save before giving up
+  foreach my $tries_left (reverse 0..3) {
+
+    try {
+      $return = $self->SUPER::save(%params);
+      $tries_left = -1;
+    } catch {
+      throw($_) unless "$_" =~ /Deadlock found/;
+      throw($_) unless $tries_left;
+      sleep 1;
+    };
+
+    last if $tries_left < 0;
+  }
 
   return $return;
 }
