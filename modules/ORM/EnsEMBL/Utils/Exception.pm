@@ -58,6 +58,8 @@ sub import {
 sub new {
   my ($class, $message) = @_;
 
+  local $Carp::MaxArgNums = -1;
+
   return bless ref $message ? $message : {
     'type'    => 'ORMException',
     'message' => $message  || '',
