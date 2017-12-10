@@ -33,6 +33,7 @@ package ORM::EnsEMBL::DB::Tools::Object::Job;
 ###     done: eg. done at LFS
 ###     failed: failed at dispatcher
 ###     deleted: dispatcher has no info about the job
+###     no_details: couldn't contact the dispatcher to get updates
 
 use strict;
 use warnings;
