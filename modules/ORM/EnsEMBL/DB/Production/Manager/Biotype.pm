@@ -93,7 +93,7 @@ sub group_members {
 
   # check group is a valid one
   throw "Invalid biotype group $group specified"
-    unless $group ~~ @{$self->fetch_all_biotype_groups()};
+    unless grep { $_ eq $group } @{$self->fetch_all_biotype_groups()};
 
   my %members;
   map { $members{$_->{name}}++ }
@@ -124,7 +124,7 @@ sub is_member_of_group {
 
   # check group is a valid one
   throw "Invalid biotype group $group specified"
-    unless $group ~~ @{$self->fetch_all_biotype_groups()};
+    unless grep { $_ eq $group } @{$self->fetch_all_biotype_groups()};
 
   my $object_type;
   if ($feature->isa('Bio::EnsEMBL::Gene')) {
