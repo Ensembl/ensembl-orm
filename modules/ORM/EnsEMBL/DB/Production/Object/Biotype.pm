@@ -25,10 +25,10 @@ use warnings;
 use parent qw(ORM::EnsEMBL::DB::Production::Object);
 
 __PACKAGE__->meta->setup(
-  table       => 'biotype',
+  table       => 'master_biotype',
 
   columns     => [
-    biotype_id        => {type => 'serial', primary_key => 1, not_null => 1}, 
+    biotype_id        => {type => 'serial', primary_key => 1, not_null => 1},
     name              => {type => 'varchar', 'length' => 64 },
     is_current        => {type => 'integer', default => 1, not_null => 1},
     is_dumped         => {type => 'integer', default => 1, not_null => 1},
@@ -58,7 +58,8 @@ __PACKAGE__->meta->setup(
                             LRG
                             no_group
                             undefined)]
-    }
+    },
+    so_acc            => {type => 'varchar', 'length' => 64 }
   ],
 
   trackable             => 1,
