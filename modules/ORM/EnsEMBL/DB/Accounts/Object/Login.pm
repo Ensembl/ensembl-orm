@@ -42,14 +42,16 @@ __PACKAGE__->meta->setup(
   trackable       => 1,
 
   virtual_columns => [
-    provider        => {'column' => 'data'},
-    password        => {'column' => 'data'},
-    ldap_user       => {'column' => 'data'},
-    email           => {'column' => 'data'},
-    name            => {'column' => 'data'},
-    organisation    => {'column' => 'data'},
-    country         => {'column' => 'data'},
-    subscription    => {'column' => 'data'}
+    provider          => {'column' => 'data'},
+    password          => {'column' => 'data'},
+    consent_version   => {'column' => 'data'},
+    consent_datetime  => {'column' => 'data'},
+    ldap_user         => {'column' => 'data'},
+    email             => {'column' => 'data'},
+    name              => {'column' => 'data'},
+    organisation      => {'column' => 'data'},
+    country           => {'column' => 'data'},
+    subscription      => {'column' => 'data'}
   ],
 
   relationships   => [
@@ -98,6 +100,22 @@ sub verify_password {
   return encrypt_password($password) eq $self->password;
 }
 
+sub set_consent {
+  ## Sets the policy version and timestamp for Ensembl web browsing if the user has consented, 
+  ## or unsets them if the policy has been rejected 
+  my ($self, $version) = @_;
+  $version ||= 0;
+
+  $self->consent_version($version);
+  my $now = strftime "%a %b %e %H:%M:%S %Y", gmtime;
+  $self->consent_datetime($now);
+}
+
+sub disable {
+  my $self = shift;
+  $self->status('disabled');
+}
+
 sub activate {
   ## Activates the login object after copying the information about user name, organisation, country it to the related user object (does not save to the database afterwards)
   ## @param User object (if not already linked to the login)
@@ -107,6 +125,8 @@ sub activate {
   } else {
     $user = $self->user;
   }
+  # TODO - DELETE THESE FIELDS FROM LOGIN TABLE AT THIS STEP, because they're not updatable via the user interface 
+  # and thus contravene the spirit of data protection legislation
   $self->$_ and !$user->$_ and $user->$_($self->$_) for qw(name organisation country);
 
   $self->reset_salt;
