@@ -24,6 +24,7 @@ use warnings;
 
 use parent qw(ORM::EnsEMBL::DB::Accounts::Object);
 
+use POSIX qw(strftime);
 use ORM::EnsEMBL::Utils::Helper qw(random_string encrypt_password);
 
 __PACKAGE__->meta->setup(
@@ -100,18 +101,19 @@ sub verify_password {
   return encrypt_password($password) eq $self->password;
 }
 
-sub set_consent {
+sub update_consent {
   ## Sets the policy version and timestamp for Ensembl web browsing if the user has consented, 
   ## or unsets them if the policy has been rejected 
   my ($self, $version) = @_;
   $version ||= 0;
 
   $self->consent_version($version);
-  my $now = strftime "%a %b %e %H:%M:%S %Y", gmtime;
+  my $now = strftime('%Y-%m-%d %H:%M:%S', gmtime());
   $self->consent_datetime($now);
+  $self->save;
 }
 
-sub disable {
+sub disable_login {
   my $self = shift;
   $self->status('disabled');
 }
