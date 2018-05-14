@@ -36,7 +36,7 @@ __PACKAGE__->meta->setup(
     identity        => {'type' => 'varchar', 'length' => '255', 'not_null' => 1},
     type            => {'type' => 'enum', 'values' => [qw(local openid ldap)], 'not_null' => 1, 'default' => 'local'},
     data            => {'type' => 'datamap', 'length' => '1024'},
-    status          => {'type' => 'enum', 'values' => [qw(active pending)], 'not_null' => 1, 'default' => 'pending'},
+    status          => {'type' => 'enum', 'values' => [qw(active pending disabled)], 'not_null' => 1, 'default' => 'pending'},
     salt            => {'type' => 'varchar', 'length' => '8'},
   ],
 
@@ -102,8 +102,8 @@ sub verify_password {
 }
 
 sub update_consent {
-  ## Sets the policy version and timestamp for Ensembl web browsing if the user has consented, 
-  ## or unsets them if the policy has been rejected 
+  ## Sets the policy version for Ensembl web browsing if the user has consented, 
+  ## or unsets it if the policy has been rejected, and timestamps the change 
   my ($self, $version) = @_;
   $version ||= 0;
 
@@ -113,9 +113,10 @@ sub update_consent {
   $self->save;
 }
 
-sub disable_login {
+sub disable {
   my $self = shift;
   $self->status('disabled');
+  $self->update_consent;
 }
 
 sub activate {
