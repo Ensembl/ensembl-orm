@@ -24,6 +24,7 @@ use warnings;
 
 use parent qw(ORM::EnsEMBL::DB::Accounts::Object);
 
+use POSIX qw(strftime);
 use ORM::EnsEMBL::Utils::Helper qw(random_string encrypt_password);
 
 __PACKAGE__->meta->setup(
@@ -35,21 +36,23 @@ __PACKAGE__->meta->setup(
     identity        => {'type' => 'varchar', 'length' => '255', 'not_null' => 1},
     type            => {'type' => 'enum', 'values' => [qw(local openid ldap)], 'not_null' => 1, 'default' => 'local'},
     data            => {'type' => 'datamap', 'length' => '1024'},
-    status          => {'type' => 'enum', 'values' => [qw(active pending)], 'not_null' => 1, 'default' => 'pending'},
+    status          => {'type' => 'enum', 'values' => [qw(active pending disabled)], 'not_null' => 1, 'default' => 'pending'},
     salt            => {'type' => 'varchar', 'length' => '8'},
   ],
 
   trackable       => 1,
 
   virtual_columns => [
-    provider        => {'column' => 'data'},
-    password        => {'column' => 'data'},
-    ldap_user       => {'column' => 'data'},
-    email           => {'column' => 'data'},
-    name            => {'column' => 'data'},
-    organisation    => {'column' => 'data'},
-    country         => {'column' => 'data'},
-    subscription    => {'column' => 'data'}
+    provider          => {'column' => 'data'},
+    password          => {'column' => 'data'},
+    consent_version   => {'column' => 'data'},
+    consent_datetime  => {'column' => 'data'},
+    ldap_user         => {'column' => 'data'},
+    email             => {'column' => 'data'},
+    name              => {'column' => 'data'},
+    organisation      => {'column' => 'data'},
+    country           => {'column' => 'data'},
+    subscription      => {'column' => 'data'}
   ],
 
   relationships   => [
@@ -98,6 +101,24 @@ sub verify_password {
   return encrypt_password($password) eq $self->password;
 }
 
+sub update_consent {
+  ## Sets the policy version for Ensembl web browsing if the user has consented, 
+  ## or unsets it if the policy has been rejected, and timestamps the change 
+  my ($self, $version) = @_;
+  $version ||= 0;
+
+  $self->consent_version($version);
+  my $now = strftime('%Y-%m-%d %H:%M:%S', gmtime());
+  $self->consent_datetime($now);
+  $self->save;
+}
+
+sub disable {
+  my $self = shift;
+  $self->status('disabled');
+  $self->update_consent;
+}
+
 sub activate {
   ## Activates the login object after copying the information about user name, organisation, country it to the related user object (does not save to the database afterwards)
   ## @param User object (if not already linked to the login)
@@ -107,6 +128,8 @@ sub activate {
   } else {
     $user = $self->user;
   }
+  # TODO - DELETE THESE FIELDS FROM LOGIN TABLE AT THIS STEP, because they're not updatable via the user interface 
+  # and thus contravene the spirit of data protection legislation
   $self->$_ and !$user->$_ and $user->$_($self->$_) for qw(name organisation country);
 
   $self->reset_salt;
