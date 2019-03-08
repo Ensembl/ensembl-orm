@@ -59,7 +59,8 @@ __PACKAGE__->meta->setup(
                             no_group
                             undefined)]
     },
-    so_acc            => {type => 'varchar', 'length' => 64 }
+    so_acc            => {type => 'varchar', 'length' => 64 },
+    so_term           => {type => 'varchar', 'length' => 1023 }
   ],
 
   trackable             => 1,
